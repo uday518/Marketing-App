@@ -1,18 +1,23 @@
+import Link from 'next/link';
+
 const relatedFeatures = [
   {
     icon: '📅',
     title: 'Appointment Management',
     description: 'Book visits directly from a patient\'s profile',
+    href: '/product/features/appointment-management',
   },
   {
     icon: '📝',
     title: 'Clinical Documentation',
     description: 'Encounters link straight back to the patient record',
+    href: '/product/features/clinical-documentation',
   },
   {
     icon: '📊',
     title: 'Reports & Analytics',
     description: 'Patient trends roll up into clinic-wide reporting',
+    href: '/product/features/reports-analytics',
   },
 ];
 
@@ -28,14 +33,15 @@ export default function PatientMgmtWorksBestWith() {
 
         <div className="grid gap-6 md:grid-cols-3">
           {relatedFeatures.map((feature) => (
-            <div
+            <Link
               key={feature.title}
+              href={feature.href}
               className="flex flex-col items-start gap-3 rounded-xl border border-neutral-200 bg-white p-6 transition-shadow hover:shadow-md"
             >
               <span className="text-2xl">{feature.icon}</span>
               <h3 className="text-lg font-semibold text-neutral-900">{feature.title}</h3>
               <p className="text-sm text-neutral-500">{feature.description}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

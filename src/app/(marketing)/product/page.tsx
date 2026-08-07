@@ -3,6 +3,7 @@ import ProductFeaturesGrid from '@/components/ProductFeaturesGrid/ProductFeature
 import ProductFeatureDetails from '@/components/ProductFeatureDetails/ProductFeatureDetails';
 import ProductStats from '@/components/ProductStats/ProductStats';
 import ProductPreview from '@/components/ProductPreview/ProductPreview';
+import ProductScreenshots from '@/components/ProductScreenshots/ProductScreenshots';
 import FinalCTA from '@/components/FinalCTA/FinalCTA';
 
 export default function ProductPage() {
@@ -13,6 +14,7 @@ export default function ProductPage() {
       <ProductFeatureDetails />
       <ProductStats />
       <ProductPreview />
+      <ProductScreenshots />
       <FinalCTA />
     </main>
   );

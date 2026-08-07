@@ -33,7 +33,7 @@ export default function MultiClinicHero() {
               href={tab.href}
               className={`pb-3 text-sm font-medium transition-colors ${
                 tab.active
-                  ? 'border-b-2 border-teal-600 text-teal-600'
+                  ? 'border-b-2 border-brand-primary text-brand-primary'
                   : 'text-neutral-500 hover:text-neutral-700'
               }`}
             >
@@ -54,7 +54,7 @@ export default function MultiClinicHero() {
             <div className="flex items-center gap-4">
               <Link
                 href="/demo"
-                className="rounded-lg bg-teal-800 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-teal-900"
+                className="rounded-lg bg-brand-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
               >
                 Book Demo
               </Link>

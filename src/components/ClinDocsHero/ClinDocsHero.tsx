@@ -35,7 +35,7 @@ export default function ClinDocsHero() {
               href={tab.href}
               className={`pb-3 text-sm font-medium transition-colors ${
                 tab.active
-                  ? 'border-b-2 border-primary-600 text-primary-600'
+                  ? 'border-b-2 border-brand-primary text-brand-primary'
                   : 'text-neutral-500 hover:text-neutral-700'
               }`}
             >
@@ -58,7 +58,7 @@ export default function ClinDocsHero() {
             <div className="flex items-center gap-4">
               <Link
                 href="/demo"
-                className="rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-700"
+                className="rounded-xl bg-brand-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
               >
                 Book Demo
               </Link>

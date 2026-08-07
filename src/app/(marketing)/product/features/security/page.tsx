@@ -4,6 +4,7 @@ import CapabilityGrid from '@/components/ui/CapabilityGrid';
 import WorkflowSteps from '@/components/ui/WorkflowSteps';
 import WorksBestWithGrid from '@/components/ui/WorksBestWithGrid';
 import SectionCTA from '@/components/ui/SectionCTA';
+import FeatureNav from '@/components/FeatureNav/FeatureNav';
 
 const sections = [
   {
@@ -70,6 +71,7 @@ export default function SecurityPage() {
       <WorkflowSteps steps={steps} />
       <WorksBestWithGrid items={relatedFeatures} />
       <SectionCTA title="See Security in Your Clinic" />
+      <FeatureNav />
     </main>
   );
 }

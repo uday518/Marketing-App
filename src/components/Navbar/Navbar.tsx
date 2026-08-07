@@ -18,7 +18,7 @@ const solutions = [
 const resources = [
   { label: 'Blog', href: '/blog' },
   { label: 'Documentation', href: '/docs' },
-  { label: 'FAQ', href: '/#faq' },
+  { label: 'FAQ', href: '/faq' },
   { label: 'Help Center', href: '/help' },
 ];
 
@@ -59,7 +59,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border-default bg-white">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-10">
-        <Link href="/" className="text-xl font-bold text-brand-logo">mysaas</Link>
+        <Link href="/" className="text-xl font-bold text-brand-primary">mysaas</Link>
 
         <nav className="hidden items-center gap-11 text-sm text-text-heading md:flex">
           <Dropdown label="Product" items={products} />

@@ -17,7 +17,7 @@ export default function TourCTA() {
           </Link>
           <Link
             href="/demo"
-            className="rounded-lg border border-white/30 bg-transparent px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+            className="rounded-lg bg-brand-primary px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
           >
             Book Demo
           </Link>

@@ -12,7 +12,7 @@ export default function SeeHowItWorksButton({
   return (
     <Link
       href={href}
-      className={`rounded-lg bg-primary-600 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-700 ${className}`}
+      className={`rounded-lg bg-brand-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover ${className}`}
     >
       See How It Works
     </Link>

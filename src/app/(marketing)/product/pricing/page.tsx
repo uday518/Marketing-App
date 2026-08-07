@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import PricingFAQ from '@/components/PricingFAQ/PricingFAQ';
 
 const plans = [
   {
@@ -124,19 +125,8 @@ export default function PricingPage() {
       <section className="bg-white px-6 py-20">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="mb-4 text-3xl font-bold text-text-heading">Frequently Asked Questions</h2>
-          <div className="mt-8 space-y-4 text-left">
-            <div className="rounded-lg border border-border-default p-6">
-              <h3 className="font-semibold text-text-heading">Can I switch plans later?</h3>
-              <p className="mt-2 text-sm text-text-muted">Yes. Upgrade or downgrade at any time from your dashboard.</p>
-            </div>
-            <div className="rounded-lg border border-border-default p-6">
-              <h3 className="font-semibold text-text-heading">What happens after the free trial?</h3>
-              <p className="mt-2 text-sm text-text-muted">Choose a paid plan or your account is paused. Data is kept for 30 days.</p>
-            </div>
-            <div className="rounded-lg border border-border-default p-6">
-              <h3 className="font-semibold text-text-heading">Do you offer annual billing?</h3>
-              <p className="mt-2 text-sm text-text-muted">Yes. Annual plans receive a 20% discount.</p>
-            </div>
+          <div className="mt-8 text-left">
+            <PricingFAQ />
           </div>
         </div>
       </section>

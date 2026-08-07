@@ -29,7 +29,7 @@ export default function ProductPreview() {
               onClick={() => setActiveTab(index)}
               className={`pb-3 text-sm font-medium transition-colors ${
                 activeTab === index
-                  ? 'border-b-2 border-primary-500 text-primary-500'
+                  ? 'border-b-2 border-brand-primary text-brand-primary'
                   : 'text-neutral-500 hover:text-neutral-700'
               }`}
             >

@@ -34,7 +34,7 @@ export default function ReportsHowItWorks() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {steps.map((step) => (
             <div key={step.number} className="flex flex-col items-start gap-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-600 text-sm font-bold text-white">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-primary text-sm font-bold text-white">
                 {step.number}
               </div>
               <h3 className="text-lg font-semibold text-neutral-900">{step.title}</h3>

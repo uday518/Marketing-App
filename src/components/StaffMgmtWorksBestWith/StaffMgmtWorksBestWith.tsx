@@ -1,18 +1,23 @@
+import Link from 'next/link';
+
 const relatedFeatures = [
   {
     icon: '🏥',
     title: 'Multi-Clinic Management',
     description: 'Reports roll up across every clinic location',
+    href: '/product/features/multi-clinic-management',
   },
   {
     icon: '🔒',
     title: 'Security',
     description: 'Role permissions are enforced at every layer',
+    href: '/product/features/security',
   },
   {
     icon: '📊',
     title: 'Reports & Analytics',
     description: 'Completion rates roll up into clinic reports',
+    href: '/product/features/reports-analytics',
   },
 ];
 
@@ -28,14 +33,15 @@ export default function StaffMgmtWorksBestWith() {
 
         <div className="grid gap-6 md:grid-cols-3">
           {relatedFeatures.map((feature) => (
-            <div
+            <Link
               key={feature.title}
+              href={feature.href}
               className="flex flex-col items-start gap-3 rounded-xl border border-neutral-200 bg-white p-6 transition-shadow hover:shadow-md"
             >
               <span className="text-2xl">{feature.icon}</span>
               <h3 className="text-lg font-semibold text-neutral-900">{feature.title}</h3>
               <p className="text-sm text-neutral-500">{feature.description}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

@@ -30,7 +30,7 @@ export default function Hero() {
             </Link>
             <Link
               href="/demo"
-              className="rounded-md border-[1.5px] border-brand-primary bg-white px-5 py-2.5 text-sm font-semibold text-brand-primary transition-colors hover:bg-brand-tint"
+              className="rounded-md border border-brand-primary bg-white px-5 py-2.5 text-sm font-semibold text-brand-primary transition-colors hover:bg-brand-tint"
             >
               Book a Demo
             </Link>

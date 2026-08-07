@@ -28,7 +28,7 @@ const defaultFaqs: FAQItem[] = [
 
 export default function FAQ() {
   return (
-    <section className="bg-secondary-100 px-6 py-20">
+    <section id="faq" className="bg-secondary-100 px-6 py-20">
       <div className="mx-auto max-w-3xl">
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-3xl font-bold text-text-heading lg:text-4xl">

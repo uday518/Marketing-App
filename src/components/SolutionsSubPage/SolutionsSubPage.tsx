@@ -58,7 +58,7 @@ export default function SolutionsSubPage({
                 <SeeHowItWorksButton />
                 <Link
                   href="/demo"
-                  className="rounded-lg border border-neutral-300 bg-white px-6 py-3 text-sm font-semibold text-neutral-700 transition-colors hover:bg-neutral-50"
+                  className="rounded-lg bg-brand-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
                 >
                   Book Demo
                 </Link>
