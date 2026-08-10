@@ -1,3 +1,5 @@
+"use client";
+
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -12,7 +14,12 @@ export default function LoginPage() {
         </div>
 
         <div className="rounded-xl border border-border-default bg-white p-8 shadow-sm">
-          <form className="space-y-5">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+            }}
+            className="space-y-5"
+          >
             <div>
               <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-text-heading">
                 Email

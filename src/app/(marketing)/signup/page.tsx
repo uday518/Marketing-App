@@ -233,7 +233,12 @@ export default function SignupPage() {
             <h2 className="mb-6 text-lg font-bold text-text-heading">
               Create Your Account
             </h2>
-            <form className="flex flex-col gap-4">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+              }}
+              className="flex flex-col gap-4"
+            >
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="fullName" className="text-sm font-medium text-text-heading">
                   Full Name

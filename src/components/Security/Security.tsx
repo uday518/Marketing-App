@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 const securityFeatures = [
   { icon: '🛡️', label: 'Data Encrypted' },
   { icon: '🔐', label: 'Role-Based Access' },
@@ -30,12 +32,12 @@ export default function Security() {
           ))}
         </div>
 
-        <a
+        <Link
           href="/security"
           className="inline-block rounded-md border-[1.5px] border-neutral-600 bg-transparent px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-neutral-800"
         >
           Learn More About Security
-        </a>
+        </Link>
       </div>
     </section>
   );

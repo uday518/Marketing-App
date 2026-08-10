@@ -146,7 +146,12 @@ export default function DemoPageContent() {
             {/* Right Form Card */}
             <div className="w-full max-w-[440px] rounded-2xl border border-neutral-200 bg-white p-8">
               <h3 className="mb-6 text-lg font-bold text-text-heading">Schedule Your Demo</h3>
-              <form className="flex flex-col gap-4">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                }}
+                className="flex flex-col gap-4"
+              >
                 <div className="flex flex-col gap-2">
                   <label className="text-[13px] font-semibold text-text-heading">Full Name</label>
                   <input
