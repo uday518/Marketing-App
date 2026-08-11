@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import ButtonLink from '@/components/ui/ButtonLink';
 
 export default function TourCTA() {
   return (
@@ -9,18 +9,12 @@ export default function TourCTA() {
         </h2>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-          <Link
-            href="/signup"
-            className="rounded-lg bg-[#0D7A97] px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#0A617A]"
-          >
+          <ButtonLink href="/signup" variant="primary" size="lg">
             Start Free Trial
-          </Link>
-          <Link
-            href="/demo"
-            className="rounded-lg bg-brand-primary px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
-          >
+          </ButtonLink>
+          <ButtonLink href="/demo" variant="primary" size="lg">
             Book Demo
-          </Link>
+          </ButtonLink>
         </div>
 
         <p className="mt-6 text-xs text-[#8099a6] sm:text-sm">

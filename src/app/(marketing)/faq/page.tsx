@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import Breadcrumb from '@/components/ui/Breadcrumb';
+import ButtonLink from '@/components/ui/ButtonLink';
 import SearchBar from '@/components/ui/SearchBar';
 import CategoryPill from '@/components/ui/CategoryPill';
 import FAQAccordion, { FAQItem } from '@/components/ui/FAQAccordion';
@@ -80,7 +80,7 @@ export default function FAQPage() {
           <Breadcrumb
             items={[
               { label: 'Home', href: '/' },
-              { label: 'Resources', href: '/blog' },
+              { label: 'Resources', href: '/resources' },
               { label: 'FAQ' },
             ]}
           />
@@ -136,12 +136,14 @@ export default function FAQPage() {
           <p className="mt-4 text-[15px] text-[#8099a6]">
             Our team is here to help you find the right solution for your clinic.
           </p>
-          <Link
-            href="/contact"
-            className="mt-8 inline-block rounded-lg border border-[#0D7A97] bg-transparent px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#0D7A97]"
+          <ButtonLink
+            href="/demo"
+            variant="primary"
+            size="lg"
+            className="mt-8"
           >
             Contact Sales
-          </Link>
+          </ButtonLink>
         </div>
       </section>
     </main>

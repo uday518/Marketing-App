@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import ButtonLink from '@/components/ui/ButtonLink';
 
 export default function NeedSomethingCustom() {
   return (
@@ -12,18 +12,12 @@ export default function NeedSomethingCustom() {
           Tell us what you need.
         </p>
         <div className="flex items-center justify-center gap-4">
-          <Link
-            href="/demo"
-            className="rounded-lg bg-brand-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
-          >
+          <ButtonLink href="/demo" variant="primary" size="md">
             Contact Sales
-          </Link>
-          <Link
-            href="/product/pricing"
-            className="rounded-lg border border-brand-primary bg-white px-6 py-3 text-sm font-semibold text-brand-primary transition-colors hover:bg-brand-tint"
-          >
+          </ButtonLink>
+          <ButtonLink href="/product/pricing" variant="secondary" size="md">
             View Pricing
-          </Link>
+          </ButtonLink>
         </div>
       </div>
     </section>

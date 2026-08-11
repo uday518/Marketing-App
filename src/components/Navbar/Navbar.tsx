@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { ChevronDownIcon } from '@/components/ui/icons';
 
 const products = [
   { label: 'Overview', href: '/product' },
@@ -30,7 +31,7 @@ function Dropdown({ label, items }: { label: string; items: { label: string; hre
         className="flex items-center gap-1 transition-colors hover:text-brand-primary"
       >
         {label}
-        <span className="text-[10px] text-text-disabled">&#9660;</span>
+        <ChevronDownIcon className="h-3.5 w-3.5 text-current" />
       </button>
 
       <div className="invisible absolute left-1/2 top-full z-50 -translate-x-1/2 opacity-0 transition-opacity duration-150 group-hover:visible group-hover:opacity-100">
@@ -61,7 +62,7 @@ export default function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-10">
         <Link href="/" className="text-xl font-bold text-brand-primary">mysaas</Link>
 
-        <nav className="hidden items-center gap-11 text-sm text-text-heading md:flex">
+        <nav className="hidden items-center gap-[31px] text-sm text-text-heading md:flex">
           <Dropdown label="Product" items={products} />
           <Dropdown label="Solutions" items={solutions} />
           <Link href="/product/pricing" className="transition-colors hover:text-brand-primary">
@@ -76,13 +77,13 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <Link
             href="/login"
-            className="hidden rounded-xl border border-brand-primary px-6 py-3 text-sm font-semibold text-brand-primary transition-colors hover:bg-brand-tint md:inline-flex"
+            className="hidden rounded-lg border border-border-default px-4 py-2 text-sm font-medium text-text-heading transition-colors hover:bg-neutral-50 md:inline-flex"
           >
             Login
           </Link>
           <Link
             href="/signup"
-            className="hidden rounded-xl bg-brand-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover md:inline-flex"
+            className="hidden rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover md:inline-flex"
           >
             Start Free Trial
           </Link>
@@ -196,13 +197,13 @@ export default function Navbar() {
             <div className="flex flex-col gap-3 pt-4">
               <Link
                 href="/login"
-                className="rounded-xl border border-brand-primary px-4 py-3 text-sm font-semibold text-brand-primary text-center transition-colors hover:bg-brand-tint"
+                className="rounded-lg border border-border-default px-4 py-3 text-sm font-medium text-text-heading text-center transition-colors hover:bg-neutral-50"
               >
                 Login
               </Link>
               <Link
                 href="/signup"
-                className="rounded-xl bg-brand-primary px-4 py-3 text-sm font-semibold text-white text-center transition-colors hover:bg-brand-primary-hover"
+                className="rounded-lg bg-brand-primary px-4 py-3 text-sm font-semibold text-white text-center transition-colors hover:bg-brand-primary-hover"
               >
                 Start Free Trial
               </Link>

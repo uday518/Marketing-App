@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost';
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outlineOnDark';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonLinkProps {
@@ -14,16 +14,18 @@ interface ButtonLinkProps {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-brand-primary text-text-on-brand hover:bg-brand-primary-hover active:bg-brand-primary-active',
+    'bg-brand-primary text-white hover:bg-brand-primary-hover active:bg-brand-primary-active',
   secondary:
     'border border-brand-primary bg-transparent text-brand-primary hover:bg-brand-tint active:bg-brand-tint/80',
   ghost: 'text-brand-primary hover:text-brand-primary-hover',
+  outlineOnDark:
+    'border border-white/30 bg-transparent text-white hover:bg-white/10 active:bg-white/20',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
   sm: 'px-4 py-2 text-xs rounded-lg',
   md: 'px-6 py-3 text-sm rounded-lg',
-  lg: 'px-8 py-3.5 text-base rounded-lg',
+  lg: 'px-7 py-3.5 text-base rounded-lg',
 };
 
 export default function ButtonLink({

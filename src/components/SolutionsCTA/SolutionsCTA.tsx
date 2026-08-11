@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import ButtonLink from '@/components/ui/ButtonLink';
 
 export default function SolutionsCTA() {
   return (
@@ -12,18 +12,12 @@ export default function SolutionsCTA() {
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-4">
-          <Link
-            href="/demo"
-            className="rounded-lg bg-[#0D7A97] px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[#0A617A]"
-          >
+          <ButtonLink href="/demo" variant="primary" size="lg">
             Book Free Consultation
-          </Link>
-          <Link
-            href="/signup"
-            className="rounded-lg border border-white/30 bg-transparent px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10"
-          >
+          </ButtonLink>
+          <ButtonLink href="/signup" variant="outlineOnDark" size="lg">
             Start Free Trial
-          </Link>
+          </ButtonLink>
         </div>
         <p className="mt-6 text-xs text-[#8099a6] sm:text-sm">No credit card required · 30-day free trial</p>
       </div>
