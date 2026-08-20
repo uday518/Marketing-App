@@ -46,7 +46,7 @@ export default function IntegrationFlow() {
             </p>
             <Link
               href="/demo"
-              className="inline-flex rounded-lg bg-brand-primary px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
+              className="inline-flex rounded-lg border border-brand-primary bg-transparent px-8 py-3 text-sm font-semibold text-brand-primary transition-colors hover:bg-brand-primary/10 hover:text-brand-primary-hover"
             >
               Book Demo
             </Link>

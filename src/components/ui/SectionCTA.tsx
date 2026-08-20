@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import ButtonLink from '@/components/ui/ButtonLink';
 
 interface SectionCTAProps {
@@ -16,9 +17,12 @@ export default function SectionCTA({ title }: SectionCTAProps) {
           <ButtonLink href="/signup" variant="primary" size="lg">
             Start Free Trial
           </ButtonLink>
-          <ButtonLink href="/demo" variant="outlineOnDark" size="lg">
+          <Link
+            href="/demo"
+            className="rounded-lg border border-brand-primary bg-transparent px-7 py-3.5 text-base font-semibold text-brand-primary transition-colors hover:bg-brand-primary/10 hover:text-brand-primary-hover"
+          >
             Book Demo
-          </ButtonLink>
+          </Link>
         </div>
       </div>
     </section>

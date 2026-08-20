@@ -92,7 +92,12 @@ export default function DocsPage() {
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <ButtonLink href="/product/tour">See How It Works</ButtonLink>
-            <ButtonLink href="/demo" variant="secondary">Book a Demo</ButtonLink>
+            <Link
+              href="/demo"
+              className="inline-flex items-center justify-center rounded-lg border border-brand-primary bg-transparent px-6 py-3 text-sm font-semibold text-brand-primary transition-colors hover:bg-brand-primary/10 hover:text-brand-primary-hover"
+            >
+              Book a Demo
+            </Link>
             <ArrowLink href="/resources/release-notes" muted>What&apos;s new</ArrowLink>
           </div>
         </div>

@@ -35,9 +35,9 @@ export default function ProductHero() {
               </Link>
               <Link
                 href="/demo"
-              className="rounded-xl border border-neutral-300 bg-white px-6 py-3 text-sm font-semibold text-neutral-700 transition-colors hover:bg-neutral-50"
-            >
-              Book Demo
+                className="rounded-xl border border-brand-primary bg-transparent px-6 py-3 text-sm font-semibold text-brand-primary transition-colors hover:bg-brand-primary/10 hover:text-brand-primary-hover"
+              >
+                Book Demo
               </Link>
             </div>
           </div>
