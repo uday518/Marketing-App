@@ -35,11 +35,10 @@ export default function LoginPage() {
     const session = await getSession();
 
     if (session?.user.role === 'patient') {
-      router.push('/portal');
+      window.location.assign('/portal');
     } else {
-      router.push('/dashboard');
+      window.location.assign('/dashboard');
     }
-    router.refresh();
   }
 
   return (

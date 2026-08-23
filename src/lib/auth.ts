@@ -24,7 +24,7 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const email = credentials.email.toLowerCase();
+        const email = credentials.email.toLowerCase().trim();
 
         // Rate limit: 5 attempts per 15 minutes per email
         const rateLimit = checkRateLimit(
@@ -90,6 +90,7 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
+      console.log('JWT Callback. User?', !!user, 'Token:', token);
       if (user) {
         token.id = user.id;
         token.role = user.role;
@@ -97,25 +98,26 @@ export const authOptions: NextAuthOptions = {
         token.passwordChangedAt = user.passwordChangedAt;
       }
 
-      // Session revocation: if password was changed after this token was issued,
-      // invalidate the session
       if (
         token.passwordChangedAt &&
         typeof token.iat === 'number' &&
         token.iat * 1000 < (token.passwordChangedAt as number)
       ) {
-        // Token was issued before password change — force re-login
+        console.log('JWT Revoked! passwordChangedAt:', token.passwordChangedAt, 'iat:', token.iat);
         return {};
       }
 
+      console.log('JWT Returning:', token);
       return token;
     },
     async session({ session, token }) {
+      console.log('Session Callback. Token:', token, 'Session before:', session);
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
         session.user.clinicId = token.clinicId as string | null;
       }
+      console.log('Session Callback returning:', session);
       return session;
     },
   },
