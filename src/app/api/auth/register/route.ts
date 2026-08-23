@@ -3,11 +3,12 @@ import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { connectToDatabase } from '@/lib/db';
 import { Clinic, User } from '@/lib/models';
+import { strongPassword } from '@/lib/validations';
 
 const registerSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Enter a valid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: strongPassword,
   clinicName: z.string().min(1, 'Clinic name is required'),
 });
 

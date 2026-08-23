@@ -24,7 +24,10 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      setError('Invalid email or password.');
+      const msg = result.error.includes('Too many')
+        ? result.error
+        : 'Invalid email or password.';
+      setError(msg);
       setIsSubmitting(false);
       return;
     }

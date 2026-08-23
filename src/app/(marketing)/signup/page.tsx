@@ -198,6 +198,9 @@ export default function SignupPage() {
                   placeholder="Create a password"
                   className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-text-heading placeholder:text-text-disabled outline-none focus:border-brand-primary focus:ring-2 focus:ring-primary-100"
                 />
+                <p className="text-xs text-text-muted">
+                  Min 8 chars: uppercase, lowercase, number, and symbol
+                </p>
               </div>
               {error && (
                 <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>

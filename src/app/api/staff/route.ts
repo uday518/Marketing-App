@@ -5,11 +5,12 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { connectToDatabase } from '@/lib/db';
 import { User } from '@/lib/models';
+import { strongPassword } from '@/lib/validations';
 
 const staffSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Enter a valid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: strongPassword,
   role: z.enum(['manager', 'dentist', 'receptionist'], { message: 'Invalid role' }),
 });
 

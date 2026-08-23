@@ -3,12 +3,13 @@ import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { connectToDatabase } from '@/lib/db';
 import { Patient } from '@/lib/models';
+import { strongPassword } from '@/lib/validations';
 
 const patientRegisterSchema = z.object({
   fullName: z.string().min(1, 'Full name is required'),
   email: z.string().email('Enter a valid email'),
   phone: z.string().optional().default(''),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: strongPassword,
 });
 
 export async function POST(request: Request) {

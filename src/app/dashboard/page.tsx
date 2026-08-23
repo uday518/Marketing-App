@@ -151,6 +151,12 @@ export default async function DashboardPage() {
             >
               Manage patients
             </Link>
+            <Link
+              href="/settings"
+              className="rounded-lg border border-border-default px-4 py-2 text-sm font-medium text-text-heading transition-colors hover:bg-neutral-100"
+            >
+              Settings
+            </Link>
             <SignOutButton />
           </div>
         </header>

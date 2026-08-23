@@ -4,10 +4,11 @@ import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { connectToDatabase } from '@/lib/db';
 import { PasswordResetToken, User } from '@/lib/models';
+import { strongPassword } from '@/lib/validations';
 
 const resetPasswordSchema = z.object({
   token: z.string().min(1, 'Token is required'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: strongPassword,
 });
 
 export async function POST(request: Request) {
@@ -37,7 +38,10 @@ export async function POST(request: Request) {
   }
 
   const passwordHash = await bcrypt.hash(parsed.data.password, 10);
-  await User.updateOne({ _id: record.userId }, { passwordHash });
+  await User.updateOne(
+    { _id: record.userId },
+    { passwordHash, passwordChangedAt: new Date() },
+  );
   await PasswordResetToken.deleteOne({ _id: record._id });
 
   return NextResponse.json({ message: 'Password updated. You can now sign in.' });

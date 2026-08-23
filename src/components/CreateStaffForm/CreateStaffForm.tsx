@@ -97,6 +97,7 @@ export default function CreateStaffForm() {
             placeholder="At least 8 characters"
             className="rounded-lg border border-border-default bg-white px-3 py-2 text-sm text-text-heading placeholder:text-text-disabled outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/50"
           />
+          <p className="text-xs text-text-muted">Uppercase, lowercase, number, symbol</p>
         </div>
         <div className="flex flex-col gap-1.5">
           <label htmlFor="role" className="text-sm font-medium text-text-heading">

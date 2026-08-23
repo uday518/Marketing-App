@@ -13,6 +13,7 @@ const userSchema = new Schema(
       default: 'owner',
     },
     clinicId: { type: Schema.Types.ObjectId, ref: 'Clinic', default: null },
+    passwordChangedAt: { type: Date, default: null },
   },
   { timestamps: true },
 );
@@ -42,6 +43,7 @@ const patientSchema = new Schema(
     insurance: { type: String, default: '' },
     clinicId: { type: Schema.Types.ObjectId, ref: 'Clinic', default: null },
     password: { type: String, select: false },
+    passwordChangedAt: { type: Date, default: null },
   },
   { timestamps: true },
 );
