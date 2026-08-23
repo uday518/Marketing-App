@@ -7,6 +7,7 @@ import { User } from '@/lib/models';
 import CreateStaffForm from '@/components/CreateStaffForm/CreateStaffForm';
 import DeleteStaffButton from '@/components/DeleteStaffButton/DeleteStaffButton';
 import SignOutButton from '@/components/SignOutButton/SignOutButton';
+import GlobalSearch from '@/components/GlobalSearch/GlobalSearch';
 
 export const metadata = {
   title: 'Staff Management — mysaas',
@@ -52,6 +53,7 @@ export default async function StaffPage() {
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <GlobalSearch />
             <Link
               href="/dashboard"
               className="rounded-lg border border-border-default px-4 py-2 text-sm font-medium text-text-heading transition-colors hover:bg-neutral-100"
