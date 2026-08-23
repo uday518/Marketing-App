@@ -20,6 +20,7 @@ Key commands (from package.json)
 - `npm run build` — build production bundle
 - `npm run start` — run production server
 - `npm run lint` — run ESLint
+- `npx tsgo -p tsconfig.json` — type-check (use `tsgo` on this machine; plain `tsc` runs out of memory)
 
 Important files & locations
 ---------------------------
@@ -29,6 +30,16 @@ Important files & locations
 - App entry & layout: [src/app/layout.tsx](src/app/layout.tsx)
 - Global styles: [src/app/globals.css](src/app/globals.css)
 - Example component: [src/components/Navbar/Navbar.tsx](src/components/Navbar/Navbar.tsx)
+
+Backend (MongoDB + Auth.js)
+---------------------------
+
+- Database: MongoDB Atlas, connected via Mongoose.
+- Shared lib: `src/lib/db.ts` (cached connection), `src/lib/models.ts` (Mongoose schemas: User, Clinic, Patient, Appointment, QueueEntry, Encounter, TreatmentPlan, AuditLog), `src/lib/auth.ts` (NextAuth v4 config, Credentials provider, JWT sessions).
+- Auth routes: `src/app/api/auth/[...nextauth]/route.ts`, `src/app/api/auth/register/route.ts` (also creates a Clinic on signup).
+- API pattern: `src/app/api/patients/route.ts` is the reference — Zod-validate the body, check `getServerSession(authOptions)`, then Mongoose. All API routes require a session.
+- Signup/login pages are wired to real auth (`src/app/(marketing)/signup/page.tsx`, `login/page.tsx`).
+- Env: `.env` needs `MONGODB_URI` (URL-encode special chars in the password) and `NEXTAUTH_SECRET`.
 
 Agent guidance (concise)
 ------------------------

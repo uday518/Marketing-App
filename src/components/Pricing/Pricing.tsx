@@ -50,7 +50,7 @@ export default function Pricing() {
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`relative flex flex-col rounded-2xl border p-8 ${
+              className={`relative flex flex-col rounded-2xl border p-8 transition-all duration-200 hover:border-brand-primary hover:shadow-md ${
                 plan.popular
                   ? 'border-brand-primary bg-white shadow-lg'
                   : 'border-border-default bg-white shadow-sm'
@@ -92,11 +92,7 @@ export default function Pricing() {
 
               <Link
                 href="/signup"
-                className={`block w-full rounded-md py-3 text-center text-sm font-semibold transition-colors ${
-                  plan.popular
-                    ? 'bg-brand-primary text-white hover:bg-brand-primary-hover'
-                    : 'border-[1.5px] border-border-default bg-white text-text-body hover:bg-neutral-50'
-                }`}
+                className="block w-full rounded-md bg-brand-primary py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
               >
                 Start Free Trial
               </Link>

@@ -109,11 +109,7 @@ export default function PricingPage() {
 
               <Link
                 href={plan.href}
-                className={`mt-8 block rounded-lg px-6 py-3 text-center text-sm font-semibold transition-colors ${
-                  plan.highlighted
-                    ? 'bg-brand-primary text-white hover:bg-brand-primary-hover'
-                    : 'border border-brand-primary bg-white text-brand-primary hover:bg-brand-tint'
-                }`}
+                className="mt-8 block rounded-lg border border-brand-primary bg-white px-6 py-3 text-center text-sm font-semibold text-brand-primary transition-colors hover:bg-brand-tint"
               >
                 {plan.cta}
               </Link>

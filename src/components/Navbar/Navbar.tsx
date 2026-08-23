@@ -85,7 +85,7 @@ export default function Navbar() {
             href="/signup"
             className="hidden rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover md:inline-flex"
           >
-            Start Free Trial
+            Sign Up
           </Link>
 
           <button
@@ -202,10 +202,10 @@ export default function Navbar() {
                 Login
               </Link>
               <Link
-                href="/signup"
-                className="rounded-lg bg-brand-primary px-4 py-3 text-sm font-semibold text-white text-center transition-colors hover:bg-brand-primary-hover"
+href="/signup"
+                className="rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
               >
-                Start Free Trial
+                Sign Up
               </Link>
             </div>
           </div>

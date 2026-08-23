@@ -58,7 +58,7 @@ export default function QueueMgmtHero() {
             <div className="flex items-center gap-4">
               <Link
                 href="/demo"
-                className="rounded-lg border border-brand-primary bg-transparent px-6 py-3 text-sm font-semibold text-brand-primary transition-colors hover:bg-brand-primary/10 hover:text-brand-primary-hover"
+                className="rounded-lg bg-brand-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover"
               >
                 Book Demo
               </Link>

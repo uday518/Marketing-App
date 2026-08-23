@@ -82,9 +82,12 @@ export default function FeaturesList() {
 
                 <Link
                   href={feature.href}
-                  className="mt-8 inline-block rounded-md border border-border-default px-5 py-2.5 text-sm font-semibold text-text-heading transition-colors hover:bg-neutral-50"
+                  className="group mt-8 inline-block rounded-md bg-brand-primary px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-brand-primary-hover hover:shadow-md"
                 >
-                  Learn More →
+                  Learn More
+                  <span className="ml-1 inline-block transition-transform duration-200 group-hover:translate-x-1">
+                    →
+                  </span>
                 </Link>
               </div>
             </div>

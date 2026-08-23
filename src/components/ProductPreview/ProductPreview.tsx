@@ -1,17 +1,13 @@
-'use client';
-
-import { useState } from 'react';
+import Link from 'next/link';
 
 const tabs = [
-  'Appointment Workspace',
-  'Queue Board',
-  'Clinical Encounter',
-  'Patient Registry',
+  { label: 'Appointment Workspace', href: '/product/features/appointment-management' },
+  { label: 'Queue Board', href: '/product/features/queue-management' },
+  { label: 'Clinical Encounter', href: '/product/features/clinical-documentation' },
+  { label: 'Patient Registry', href: '/product/features/patient-management' },
 ];
 
 export default function ProductPreview() {
-  const [activeTab, setActiveTab] = useState(0);
-
   return (
     <section className="bg-neutral-50 px-6 py-20">
       <div className="mx-auto max-w-7xl">
@@ -21,27 +17,21 @@ export default function ProductPreview() {
           </h2>
         </div>
 
-        {/* Tabs */}
         <div className="mb-8 flex flex-wrap items-center justify-center gap-6 border-b border-neutral-200">
-          {tabs.map((tab, index) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(index)}
-              className={`pb-3 text-sm font-medium transition-colors ${
-                activeTab === index
-                  ? 'border-b-2 border-brand-primary text-brand-primary'
-                  : 'text-neutral-500 hover:text-neutral-700'
-              }`}
+          {tabs.map((tab) => (
+            <Link
+              key={tab.label}
+              href={tab.href}
+              className="pb-3 text-sm font-medium text-neutral-500 transition-colors hover:border-b-2 hover:border-brand-primary hover:text-brand-primary"
             >
-              {tab}
-            </button>
+              {tab.label}
+            </Link>
           ))}
         </div>
 
-        {/* Preview */}
         <div className="flex h-96 items-center justify-center rounded-2xl bg-white shadow-sm">
           <span className="text-sm text-neutral-400">
-            {tabs[activeTab]} screenshot
+            {tabs[0].label} screenshot
           </span>
         </div>
 
