@@ -6,6 +6,7 @@ import { authOptions } from '@/lib/auth';
 import { connectToDatabase } from '@/lib/db';
 import { Appointment, Clinic, Encounter, Patient, QueueEntry } from '@/lib/models';
 import SignOutButton from '@/components/SignOutButton/SignOutButton';
+import GlobalSearch from '@/components/GlobalSearch/GlobalSearch';
 import StatCard from '@/components/ui/StatCard';
 import { CalendarIcon, ChartIcon, ClockIcon, UsersIcon } from '@/components/ui/icons';
 
@@ -137,6 +138,7 @@ export default async function DashboardPage() {
             </p>
           </div>
           <div className="flex items-center gap-3">
+            <GlobalSearch />
             {session.user.role === 'owner' && (
               <Link
                 href="/staff"
