@@ -24,9 +24,6 @@ export default function FinalCTA() {
           </Link>
         </div>
 
-        <p className="mt-6 text-xs text-[#8099a6] sm:text-sm">
-          No credit card required · Setup in 10 minutes · Cancel anytime
-        </p>
       </div>
     </section>
   );
