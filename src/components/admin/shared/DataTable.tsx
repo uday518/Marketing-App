@@ -1,54 +1,80 @@
-import React from 'react';
+"use client";
+
+import React from "react";
 
 export interface Column<T> {
-  key: string;
+  key: keyof T | string;
   label: string;
-  render?: (item: T) => React.ReactNode;
+  render?: (row: T) => React.ReactNode;
 }
 
 interface DataTableProps<T> {
   columns: Column<T>[];
   data: T[];
-  onRowClick?: (item: T) => void;
   emptyMessage?: string;
+  onRowClick?: (row: T) => void;
 }
 
-export default function DataTable<T extends Record<string, any>>({ 
-  columns, 
-  data, 
+export default function DataTable<T>({
+  columns,
+  data,
+  emptyMessage = "No data found",
   onRowClick,
-  emptyMessage = "No data available."
 }: DataTableProps<T>) {
   return (
-    <div className="w-full overflow-hidden rounded-xl border border-border-default bg-white shadow-sm">
+    <div className="overflow-hidden rounded-xl border border-border-default bg-white">
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm text-text-body">
-          <thead className="border-b border-border-default bg-bg-page/50 text-xs uppercase tracking-wider text-text-muted">
-            <tr>
-              {columns.map((col) => (
-                <th key={col.key} className="px-6 py-4 font-semibold whitespace-nowrap">
-                  {col.label}
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-border-default bg-neutral-50">
+              {columns.map((column) => (
+                <th
+                  key={String(column.key)}
+                  className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-text-muted"
+                >
+                  {column.label}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-border-default bg-white">
+
+          <tbody>
             {data.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-6 py-8 text-center text-text-muted">
+                <td
+                  colSpan={columns.length}
+                  className="px-4 py-10 text-center text-sm text-text-muted"
+                >
                   {emptyMessage}
                 </td>
               </tr>
             ) : (
-              data.map((item, i) => (
-                <tr 
-                  key={item.id || i} 
-                  onClick={() => onRowClick?.(item)}
-                  className={`transition-colors hover:bg-neutral-50 ${onRowClick ? 'cursor-pointer' : ''}`}
+              data.map((row, index) => (
+                <tr
+                  key={index}
+                  onClick={
+                    onRowClick
+                      ? () => onRowClick(row)
+                      : undefined
+                  }
+                  className={`border-b border-border-default last:border-0 ${
+                    onRowClick
+                      ? "cursor-pointer hover:bg-neutral-50"
+                      : ""
+                  }`}
                 >
-                  {columns.map((col) => (
-                    <td key={col.key} className="px-6 py-4 whitespace-nowrap">
-                      {col.render ? col.render(item) : item[col.key]}
+                  {columns.map((column) => (
+                    <td
+                      key={String(column.key)}
+                      className="px-4 py-3 text-sm text-text-body"
+                    >
+                      {column.render
+                        ? column.render(row)
+                        : String(
+                            row[
+                              column.key as keyof T
+                            ] ?? ""
+                          )}
                     </td>
                   ))}
                 </tr>
