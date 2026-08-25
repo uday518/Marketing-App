@@ -2,7 +2,8 @@ import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import { connectToDatabase } from './db';
-import { Patient, User } from './models';
+import { Patient } from '@/models/Patient';
+import { User } from '@/models/User';
 import { checkRateLimit } from './rate-limit';
 
 const MAX_LOGIN_ATTEMPTS = 5;
