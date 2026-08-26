@@ -3,55 +3,95 @@
 import DataTable, {
   type Column,
 } from "@/components/admin/shared/DataTable";
+import StatusBadge from "@/components/admin/shared/StatusBadge";
 
-type DemoRequest = {
-  id: string;
-  clinicName: string;
+export interface PlatformTableItem {
+  _id: string;
+  name: string;
   email: string;
   phone: string;
+  company: string;
   status: string;
   date: string;
-};
+  type?: string;
+}
 
 interface PlatformDashboardTableProps {
-  data: DemoRequest[];
+  data: PlatformTableItem[];
+  emptyMessage?: string;
+  type?: "demo" | "lead";
 }
 
 export default function PlatformDashboardTable({
   data,
+  emptyMessage = "No data found",
+  type = "demo",
 }: PlatformDashboardTableProps) {
-  const columns: Column<DemoRequest>[] = [
+  const demoColumns: Column<PlatformTableItem>[] = [
     {
-      key: "id",
-      label: "ID",
+      key: "company",
+      label: "Clinic",
     },
     {
-      key: "clinicName",
-      label: "Clinic",
+      key: "name",
+      label: "Contact",
     },
     {
       key: "email",
       label: "Email",
     },
     {
-      key: "phone",
-      label: "Phone",
+      key: "date",
+      label: "Demo Date",
+      render: (item) =>
+        item.date
+          ? new Date(item.date).toLocaleDateString()
+          : "-",
     },
     {
       key: "status",
       label: "Status",
+      render: (item) => (
+        <StatusBadge status={item.status} />
+      ),
+    },
+  ];
+
+  const leadColumns: Column<PlatformTableItem>[] = [
+    {
+      key: "company",
+      label: "Clinic",
+    },
+    {
+      key: "name",
+      label: "Contact",
+    },
+    {
+      key: "email",
+      label: "Email",
     },
     {
       key: "date",
-      label: "Date",
+      label: "Created",
+      render: (item) =>
+        item.date
+          ? new Date(item.date).toLocaleDateString()
+          : "-",
+    },
+    {
+      key: "status",
+      label: "Status",
+      render: (item) => (
+        <StatusBadge status={item.status} />
+      ),
     },
   ];
 
   return (
     <DataTable
-      columns={columns}
+      columns={type === "demo" ? demoColumns : leadColumns}
       data={data}
-      emptyMessage="No demo requests"
+      emptyMessage={emptyMessage}
     />
   );
 }
