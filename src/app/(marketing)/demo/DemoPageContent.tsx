@@ -294,19 +294,20 @@ export default function DemoPageContent() {
                   className="overflow-hidden rounded-xl border border-neutral-200 bg-white"
                 >
                   <button
+                    type="button"
                     onClick={() => setOpenFaqIndex(isOpen ? null : index)}
                     className="flex w-full items-center justify-between px-5 py-[18px] text-left text-sm text-text-heading transition-colors hover:text-primary-600"
                     aria-expanded={isOpen}
                   >
                     <span>{item.question}</span>
                     <span
-                      className={`ml-4 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs transition-transform duration-200 ${
+                      className={`ml-4 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-lg font-light transition-transform duration-300 ${
                         isOpen
-                          ? 'rotate-180 bg-primary-100 text-primary-700 font-bold'
+                          ? 'rotate-45 bg-primary-100 text-primary-700'
                           : 'bg-neutral-100 text-neutral-500'
                       }`}
                     >
-                      {isOpen ? '−' : '+'}
+                      +
                     </span>
                   </button>
                   {isOpen && (

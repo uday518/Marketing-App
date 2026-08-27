@@ -3,9 +3,7 @@ import { getServerSession } from 'next-auth';
 import { z } from 'zod';
 import { authOptions } from '@/lib/auth';
 import { connectToDatabase } from '@/lib/db';
-import { Clinic } from '@/models/Clinic';
-import { Patient } from '@/models/Patient';
-import { User } from '@/models/User';
+import { Clinic, Patient, User } from '@/lib/models';
 
 const updateClinicSchema = z.object({
   name: z.string().min(1, 'Clinic name is required').trim(),

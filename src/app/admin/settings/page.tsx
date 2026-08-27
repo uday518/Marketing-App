@@ -27,7 +27,7 @@ export default function SettingsPage() {
           <div className="rounded-xl border border-border-default bg-white shadow-sm overflow-hidden">
             <div className="border-b border-border-default px-6 py-4">
               <h3 className="text-lg font-semibold text-text-heading">Clinic Profile</h3>
-              <p className="text-sm text-text-muted">Update your clinic's public-facing information.</p>
+              <p className="text-sm text-text-muted">Update your clinic&apos;s public-facing information.</p>
             </div>
             
             <div className="p-6 space-y-6">

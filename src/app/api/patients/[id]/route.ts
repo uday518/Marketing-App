@@ -4,7 +4,7 @@ import { z } from 'zod';
 import mongoose from 'mongoose';
 import { authOptions } from '@/lib/auth';
 import { connectToDatabase } from '@/lib/db';
-import { Patient } from '@/models/Patient';
+import { Patient } from '@/lib/models';
 
 const updatePatientSchema = z.object({
     fullName: z.string().min(1, 'Full name is required').trim(),

@@ -69,7 +69,9 @@ export default async function PatientDetailPage({
 
   await connectToDatabase();
 
-  const patient = await Patient.findById(id).lean();
+  const clinicFilter = session.user.clinicId ? { clinicId: session.user.clinicId } : {};
+
+  const patient = await Patient.findOne({ _id: id, ...clinicFilter }).lean();
 
   if (!patient) {
     redirect('/patients');

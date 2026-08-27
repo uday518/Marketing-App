@@ -10,16 +10,47 @@ type DemoRequest = {
   email: string;
   phone: string;
   status: string;
-  date: string;
+  requestedDate: string;
+};
+
+type Lead = {
+  id: string;
+  company: string;
+  contactName: string;
+  email: string;
+  source: string;
+  status: string;
+  createdAt: string;
 };
 
 interface PlatformDashboardTableProps {
-  data: DemoRequest[];
+  data: DemoRequest[] | Lead[];
 }
 
 export default function PlatformDashboardTable({
   data,
 }: PlatformDashboardTableProps) {
+  const isLeadTable = data.length > 0 && "company" in data[0];
+
+  if (isLeadTable) {
+    const columns: Column<Lead>[] = [
+      { key: "company", label: "Company" },
+      { key: "contactName", label: "Contact" },
+      { key: "email", label: "Email" },
+      { key: "source", label: "Source" },
+      { key: "createdAt", label: "Created" },
+      { key: "status", label: "Status" },
+    ];
+
+    return (
+      <DataTable
+        columns={columns}
+        data={data as Lead[]}
+        emptyMessage="No leads"
+      />
+    );
+  }
+
   const columns: Column<DemoRequest>[] = [
     {
       key: "id",
@@ -42,7 +73,7 @@ export default function PlatformDashboardTable({
       label: "Status",
     },
     {
-      key: "date",
+      key: "requestedDate",
       label: "Date",
     },
   ];
@@ -50,7 +81,7 @@ export default function PlatformDashboardTable({
   return (
     <DataTable
       columns={columns}
-      data={data}
+      data={data as DemoRequest[]}
       emptyMessage="No demo requests"
     />
   );
