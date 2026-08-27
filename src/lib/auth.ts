@@ -2,9 +2,7 @@ import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { connectToDatabase } from "./db";
-import { Patient } from "@/models/Patient";
-import { User } from "@/models/User";
-import { PlatformAdmin } from "@/models/Platform-Admin";
+import { Patient, User, PlatformAdmin } from "@/lib/models";
 import { checkRateLimit } from "./rate-limit";
 
 const MAX_LOGIN_ATTEMPTS = 5;
@@ -133,20 +131,13 @@ export const authOptions: NextAuthOptions = {
           }
 
           return {
-            id: platformAdmin._id.toString(),
-            email: platformAdmin.email,
-            name: platformAdmin.name,
-
-            // Important
-            role: "platform_admin",
-
-            // Keep the actual platform permission
-            platformRole: platformAdmin.role,
-
-            clinicId: null,
-
-            passwordChangedAt: platformAdmin.passwordChangedAt
-              ? platformAdmin.passwordChangedAt.getTime()
+            id: user._id.toString(),
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            clinicId: user.clinicId ? user.clinicId.toString() : null,
+            passwordChangedAt: user.passwordChangedAt
+              ? user.passwordChangedAt.getTime()
               : null,
           };
         }

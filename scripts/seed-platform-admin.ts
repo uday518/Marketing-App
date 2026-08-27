@@ -2,7 +2,7 @@ import "dotenv/config";
 import bcrypt from "bcryptjs";
 
 import { connectToDatabase } from "../src/lib/db";
-import { PlatformAdmin } from "../src/models/Platform-Admin";
+import { PlatformAdmin } from "../src/lib/models";
 
 async function seedPlatformAdmin() {
   try {

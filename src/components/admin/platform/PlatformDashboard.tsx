@@ -3,95 +3,86 @@
 import DataTable, {
   type Column,
 } from "@/components/admin/shared/DataTable";
-import StatusBadge from "@/components/admin/shared/StatusBadge";
 
-export interface PlatformTableItem {
-  _id: string;
-  name: string;
+type DemoRequest = {
+  id: string;
+  clinicName: string;
   email: string;
   phone: string;
-  company: string;
   status: string;
-  date: string;
-  type?: string;
-}
+  requestedDate: string;
+};
+
+type Lead = {
+  id: string;
+  company: string;
+  contactName: string;
+  email: string;
+  source: string;
+  status: string;
+  createdAt: string;
+};
 
 interface PlatformDashboardTableProps {
-  data: PlatformTableItem[];
-  emptyMessage?: string;
-  type?: "demo" | "lead";
+  data: DemoRequest[] | Lead[];
 }
 
 export default function PlatformDashboardTable({
   data,
-  emptyMessage = "No data found",
-  type = "demo",
 }: PlatformDashboardTableProps) {
-  const demoColumns: Column<PlatformTableItem>[] = [
-    {
-      key: "company",
-      label: "Clinic",
-    },
-    {
-      key: "name",
-      label: "Contact",
-    },
-    {
-      key: "email",
-      label: "Email",
-    },
-    {
-      key: "date",
-      label: "Demo Date",
-      render: (item) =>
-        item.date
-          ? new Date(item.date).toLocaleDateString()
-          : "-",
-    },
-    {
-      key: "status",
-      label: "Status",
-      render: (item) => (
-        <StatusBadge status={item.status} />
-      ),
-    },
-  ];
+  const isLeadTable = data.length > 0 && "company" in data[0];
 
-  const leadColumns: Column<PlatformTableItem>[] = [
+  if (isLeadTable) {
+    const columns: Column<Lead>[] = [
+      { key: "company", label: "Company" },
+      { key: "contactName", label: "Contact" },
+      { key: "email", label: "Email" },
+      { key: "source", label: "Source" },
+      { key: "createdAt", label: "Created" },
+      { key: "status", label: "Status" },
+    ];
+
+    return (
+      <DataTable
+        columns={columns}
+        data={data as Lead[]}
+        emptyMessage="No leads"
+      />
+    );
+  }
+
+  const columns: Column<DemoRequest>[] = [
     {
-      key: "company",
-      label: "Clinic",
+      key: "id",
+      label: "ID",
     },
     {
-      key: "name",
-      label: "Contact",
+      key: "clinicName",
+      label: "Clinic",
     },
     {
       key: "email",
       label: "Email",
     },
     {
-      key: "date",
-      label: "Created",
-      render: (item) =>
-        item.date
-          ? new Date(item.date).toLocaleDateString()
-          : "-",
+      key: "phone",
+      label: "Phone",
     },
     {
       key: "status",
       label: "Status",
-      render: (item) => (
-        <StatusBadge status={item.status} />
-      ),
+    },
+    {
+      key: "requestedDate",
+      label: "Date",
     },
   ];
 
   return (
     <DataTable
-      columns={type === "demo" ? demoColumns : leadColumns}
-      data={data}
-      emptyMessage={emptyMessage}
+      columns={columns}
+      data={data as DemoRequest[]}
+      emptyMessage="No demo requests"
     />
   );
 }

@@ -40,13 +40,16 @@ export default async function PatientsPage({
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
+  const clinicFilter = session.user.clinicId ? { clinicId: session.user.clinicId } : {};
+
   const [total, newThisMonth, withInsurance, missingPhone, patients] = await Promise.all([
-    Patient.countDocuments(),
-    Patient.countDocuments({ createdAt: { $gte: startOfMonth } }),
-    Patient.countDocuments({ insurance: { $ne: '' } }),
-    Patient.countDocuments({ phone: '' }),
+    Patient.countDocuments(clinicFilter),
+    Patient.countDocuments({ ...clinicFilter, createdAt: { $gte: startOfMonth } }),
+    Patient.countDocuments({ ...clinicFilter, insurance: { $ne: '' } }),
+    Patient.countDocuments({ ...clinicFilter, phone: '' }),
     query
       ? Patient.find({
+          ...clinicFilter,
           $or: [
             { fullName: { $regex: escapeRegex(query), $options: 'i' } },
             { email: { $regex: escapeRegex(query), $options: 'i' } },
@@ -55,7 +58,7 @@ export default async function PatientsPage({
         })
           .sort({ createdAt: -1 })
           .lean()
-      : Patient.find().sort({ createdAt: -1 }).lean(),
+      : Patient.find(clinicFilter).sort({ createdAt: -1 }).lean(),
   ]);
 
   return (

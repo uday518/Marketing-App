@@ -72,6 +72,8 @@ export default async function DashboardPage() {
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
 
+    const clinicFilter = session.user.clinicId ? { clinicId: session.user.clinicId } : {};
+
     const [
       totalPatients,
       todayAppointments,
@@ -81,12 +83,12 @@ export default async function DashboardPage() {
       patientDocs,
       clinic,
     ] = await Promise.all([
-      Patient.countDocuments(),
-      Appointment.countDocuments({ dateTime: { $gte: startOfDay, $lt: endOfDay } }),
-      QueueEntry.countDocuments({ status: 'waiting' }),
-      Encounter.countDocuments(),
-      Appointment.find().sort({ dateTime: -1 }).limit(5).lean(),
-      Patient.find().sort({ createdAt: -1 }).limit(5).lean(),
+      Patient.countDocuments(clinicFilter),
+      Appointment.countDocuments({ ...clinicFilter, dateTime: { $gte: startOfDay, $lt: endOfDay } }),
+      QueueEntry.countDocuments({ ...clinicFilter, status: 'waiting' }),
+      Encounter.countDocuments(clinicFilter),
+      Appointment.find(clinicFilter).sort({ dateTime: -1 }).limit(5).lean(),
+      Patient.find(clinicFilter).sort({ createdAt: -1 }).limit(5).lean(),
       session.user.clinicId ? Clinic.findById(session.user.clinicId).lean() : Promise.resolve(null),
     ]);
 

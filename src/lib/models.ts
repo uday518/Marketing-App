@@ -68,12 +68,15 @@ const queueEntrySchema = new Schema(
   {
     clinicId: { type: Schema.Types.ObjectId, ref: 'Clinic', required: true },
     patientId: { type: Schema.Types.ObjectId, ref: 'Patient', required: true },
+    appointmentId: { type: Schema.Types.ObjectId, ref: 'Appointment', default: null },
     status: {
       type: String,
       enum: ['waiting', 'in-room', 'completed'],
       default: 'waiting',
     },
     joinedAt: { type: Date, default: Date.now },
+    calledAt: { type: Date, default: null },
+    completedAt: { type: Date, default: null },
   },
   { timestamps: true },
 );
@@ -142,6 +145,23 @@ const passwordResetTokenSchema = new Schema(
   { timestamps: true },
 );
 
+const platformAdminSchema = new Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    passwordHash: { type: String, required: true, select: false },
+    role: {
+      type: String,
+      enum: ['super_admin', 'support'],
+      default: 'super_admin',
+    },
+    isActive: { type: Boolean, default: true },
+    lastLoginAt: { type: Date, default: null },
+    passwordChangedAt: { type: Date, default: null },
+  },
+  { timestamps: true },
+);
+
 type UserDoc = InferSchemaType<typeof userSchema>;
 type PatientDoc = InferSchemaType<typeof patientSchema>;
 type AppointmentDoc = InferSchemaType<typeof appointmentSchema>;
@@ -152,6 +172,7 @@ type QueueEntryDoc = InferSchemaType<typeof queueEntrySchema>;
 type AuditLogDoc = InferSchemaType<typeof auditLogSchema>;
 type ContactMessageDoc = InferSchemaType<typeof contactMessageSchema>;
 type PasswordResetTokenDoc = InferSchemaType<typeof passwordResetTokenSchema>;
+type PlatformAdminDoc = InferSchemaType<typeof platformAdminSchema>;
 
 function model<T>(name: string, schema: Schema): Model<T> {
   return (mongoose.models[name] as Model<T> | undefined) ??
@@ -172,6 +193,8 @@ export const PasswordResetToken = model<PasswordResetTokenDoc>(
   passwordResetTokenSchema,
 );
 
+export const PlatformAdmin = model<PlatformAdminDoc>('PlatformAdmin', platformAdminSchema);
+
 export type {
   UserDoc,
   PatientDoc,
@@ -183,4 +206,5 @@ export type {
   AuditLogDoc,
   ContactMessageDoc,
   PasswordResetTokenDoc,
+  PlatformAdminDoc,
 };

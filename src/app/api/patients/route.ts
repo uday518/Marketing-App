@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { z } from 'zod';
 import { authOptions } from '@/lib/auth';
 import { connectToDatabase } from '@/lib/db';
-import { Patient } from '@/models/Patient';
+import { Patient } from '@/lib/models';
 
 const patientSchema = z.object({
   fullName: z.string().min(1, 'Full name is required').trim(),

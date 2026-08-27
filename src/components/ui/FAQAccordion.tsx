@@ -30,13 +30,14 @@ export default function FAQAccordion({
             className="overflow-hidden rounded-xl border border-[#D9DCE5] bg-white transition-colors"
           >
             <button
+              type="button"
               onClick={() => setOpenIndex(isOpen ? null : index)}
               className="flex w-full items-center justify-between px-5 py-[18px] text-left text-base text-[#1A2038] transition-colors hover:text-[#0D7A97]"
               aria-expanded={isOpen}
             >
               <span>{item.question}</span>
               <span
-                className={`ml-4 flex h-6 w-6 shrink-0 items-center justify-center text-lg transition-transform duration-200 ${
+                className={`ml-4 flex h-6 w-6 shrink-0 items-center justify-center text-lg font-light transition-transform duration-300 ${
                   isOpen ? 'rotate-45 text-[#0D7A97]' : 'text-[#0D7A97]'
                 }`}
               >

@@ -3,9 +3,7 @@ import { getServerSession } from 'next-auth';
 import { z } from 'zod';
 import { authOptions } from '@/lib/auth';
 import { connectToDatabase } from '@/lib/db';
-import { Appointment } from '@/models/Appointment';
-import { Patient } from '@/models/Patient';
-import { User } from '@/models/User';
+import { Appointment, Patient, User } from '@/lib/models';
 
 const appointmentSchema = z.object({
     patientId: z.string().min(1, 'Patient is required'),

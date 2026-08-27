@@ -115,15 +115,11 @@ export default function FAQPage() {
               )}
             </div>
           ) : (
-            <div className="space-y-12">
-              {categories.map((category) => (
-                <div key={category}>
-                  <h2 className="mb-6 text-center text-lg font-semibold text-[#1A2038]">
-                    {category}
-                  </h2>
-                  <FAQAccordion items={faqData[category]} />
-                </div>
-              ))}
+            <div>
+              <h2 className="mb-6 text-center text-lg font-semibold text-[#1A2038]">
+                {activeCategory}
+              </h2>
+              <FAQAccordion key={activeCategory} items={faqData[activeCategory]} />
             </div>
           )}
         </div>

@@ -12,6 +12,19 @@ type SearchResult = {
   sublabel?: string;
 };
 
+type PatientSearchRecord = {
+  _id: string;
+  fullName: string;
+  email?: string;
+  phone?: string;
+};
+
+type StaffSearchRecord = {
+  _id: string;
+  name: string;
+  role?: string;
+};
+
 const STATIC_PAGES: SearchResult[] = [
   { id: 'page-dashboard', type: 'page', label: 'Dashboard', href: '/dashboard', sublabel: 'View overview & stats' },
   { id: 'page-patients', type: 'page', label: 'Patients', href: '/patients', sublabel: 'Manage patient records' },
@@ -25,7 +38,6 @@ export default function GlobalSearch() {
   const [isOpen, setIsOpen] = useState(false);
   const [patients, setPatients] = useState<SearchResult[]>([]);
   const [staff, setStaff] = useState<SearchResult[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -38,9 +50,9 @@ export default function GlobalSearch() {
         ]);
 
         if (patientsRes?.ok) {
-          const data = await patientsRes.json();
+          const data: PatientSearchRecord[] = await patientsRes.json();
           setPatients(
-            data.map((p: any) => ({
+            data.map((p) => ({
               id: `patient-${p._id}`,
               type: 'patient',
               label: p.fullName,
@@ -51,10 +63,10 @@ export default function GlobalSearch() {
         }
 
         if (staffRes?.ok) {
-          const data = await staffRes.json();
+          const data: { staff?: StaffSearchRecord[] } = await staffRes.json();
           if (data.staff) {
             setStaff(
-              data.staff.map((s: any) => ({
+              data.staff.map((s) => ({
                 id: `staff-${s._id}`,
                 type: 'staff',
                 label: s.name,
@@ -119,13 +131,14 @@ export default function GlobalSearch() {
         <div className="absolute top-full mt-2 w-full overflow-hidden rounded-xl border border-border-default bg-white shadow-lg">
           {filteredResults.length === 0 ? (
             <div className="px-4 py-6 text-center text-sm text-text-muted">
-              No results found for "{query}"
+              No results found for &quot;{query}&quot;
             </div>
           ) : (
             <ul className="max-h-80 overflow-y-auto py-2">
               {filteredResults.map((result) => (
                 <li key={result.id}>
                   <button
+                    type="button"
                     onClick={() => handleSelect(result.href)}
                     className="flex w-full items-center justify-between px-4 py-2.5 text-left hover:bg-neutral-50 focus:bg-neutral-50 focus:outline-none"
                   >
