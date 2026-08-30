@@ -192,7 +192,7 @@ export default function DemoRequestsPage() {
     },
     {
       key: "name",
-      label: "Contact",
+      label: "Name",
     },
     {
       key: "email",
