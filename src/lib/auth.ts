@@ -1,6 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+
 import { connectToDatabase } from "./db";
 import { Patient } from "@/models/Patient";
 import { User } from "@/models/User";
@@ -30,6 +31,7 @@ export const authOptions: NextAuthOptions = {
           label: "Email",
           type: "email",
         },
+
         password: {
           label: "Password",
           type: "password",
@@ -41,11 +43,13 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const email = credentials.email.toLowerCase().trim();
+        const email = credentials.email
+          .toLowerCase()
+          .trim();
 
-        // --------------------------------------------------
+        // ================================================
         // Rate limiting
-        // --------------------------------------------------
+        // ================================================
 
         const rateLimit = checkRateLimit(
           `login:${email}`,
@@ -66,12 +70,14 @@ export const authOptions: NextAuthOptions = {
 
         await connectToDatabase();
 
-        // ==================================================
+        // ================================================
         // 1. PLATFORM ADMIN
-        // ==================================================
+        // ================================================
 
-        const platformAdmin = await PlatformAdmin.findOne({ email })
-          .select("+passwordHash");
+        const platformAdmin =
+          await PlatformAdmin.findOne({ email }).select(
+            "+passwordHash",
+          );
 
         if (platformAdmin) {
           if (!platformAdmin.isActive) {
@@ -101,26 +107,26 @@ export const authOptions: NextAuthOptions = {
             email: platformAdmin.email,
             name: platformAdmin.name,
 
-            // Keep platform admin separate from clinic roles
-            role: 'platform_admin',
+            role: "platform_admin",
 
             platformRole: platformAdmin.role,
 
             clinicId: null,
 
-            passwordChangedAt: platformAdmin.passwordChangedAt
-              ? platformAdmin.passwordChangedAt.getTime()
-              : null,
+            passwordChangedAt:
+              platformAdmin.passwordChangedAt
+                ? platformAdmin.passwordChangedAt.getTime()
+                : null,
           };
         }
 
-        // ==================================================
+        // ================================================
         // 2. CLINIC STAFF
-        // ==================================================
+        // ================================================
 
         const user = await User.findOne({
           email,
-        });
+        }).select("+passwordHash");
 
         if (user) {
           const isValid = await bcrypt.compare(
@@ -133,27 +139,26 @@ export const authOptions: NextAuthOptions = {
           }
 
           return {
-            id: platformAdmin._id.toString(),
-            email: platformAdmin.email,
-            name: platformAdmin.name,
+            id: user._id.toString(),
+            email: user.email,
+            name: user.name,
 
-            // Important
-            role: "platform_admin",
+            role: user.role,
 
-            // Keep the actual platform permission
-            platformRole: platformAdmin.role,
-
-            clinicId: null,
-
-            passwordChangedAt: platformAdmin.passwordChangedAt
-              ? platformAdmin.passwordChangedAt.getTime()
+            clinicId: user.clinicId
+              ? user.clinicId.toString()
               : null,
+
+            passwordChangedAt:
+              user.passwordChangedAt
+                ? user.passwordChangedAt.getTime()
+                : null,
           };
         }
 
-        // ==================================================
+        // ================================================
         // 3. PATIENT
-        // ==================================================
+        // ================================================
 
         const patient = await Patient.findOne({
           email,
@@ -192,9 +197,9 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
 
-  // ======================================================
+  // ================================================
   // CALLBACKS
-  // ======================================================
+  // ================================================
 
   callbacks: {
     async jwt({ token, user }) {
@@ -203,12 +208,11 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role;
         token.clinicId = user.clinicId;
         token.platformRole = user.platformRole;
-        token.passwordChangedAt = user.passwordChangedAt;
+        token.passwordChangedAt =
+          user.passwordChangedAt;
       }
-      // ----------------------------------------------
-      // Revoke JWT after password change
-      // ----------------------------------------------
 
+      // Revoke JWT after password change
       if (
         token.passwordChangedAt &&
         typeof token.iat === "number" &&
@@ -221,16 +225,18 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
 
-    // ==================================================
-    // SESSION
-    // ==================================================
-
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.role = token.role as string;
-        session.user.clinicId = token.clinicId as string | null;
-        session.user.platformRole = token.platformRole as
+
+        session.user.role =
+          token.role as string;
+
+        session.user.clinicId =
+          token.clinicId as string | null;
+
+        session.user.platformRole =
+          token.platformRole as
           | "super_admin"
           | "support"
           | undefined;

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { connectToDatabase } from '@/lib/db';
-import { Patient } from '@/lib/models';
+import { Patient } from '@/models/Patient';
 import { strongPassword } from '@/lib/validations';
 
 const patientRegisterSchema = z.object({
