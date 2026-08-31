@@ -16,9 +16,7 @@ export default function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(
-    e: React.FormEvent<HTMLFormElement>,
-  ) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     setIsSubmitting(true);
@@ -43,16 +41,6 @@ export default function LoginPage() {
       const session = await getSession();
 
       // ================================================
-      // DEMO ACCOUNT
-      // ================================================
-
-      if (session?.user.role === "demo_account") {
-        router.push("/demo");
-        router.refresh();
-        return;
-      }
-
-      // ================================================
       // PATIENT
       // ================================================
 
@@ -73,17 +61,15 @@ export default function LoginPage() {
       }
 
       // ================================================
-      // CLINIC STAFF
+      // CLINIC OWNER / STAFF
       // ================================================
 
-      router.push("/dashboard");
+      router.push("/admin");
       router.refresh();
     } catch (error) {
       console.error("LOGIN_ERROR:", error);
 
-      setError(
-        "Something went wrong while signing in. Please try again.",
-      );
+      setError("Something went wrong while signing in. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -94,9 +80,7 @@ export default function LoginPage() {
       <div className="mx-auto max-w-md">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-text-heading">
-            Sign In
-          </h1>
+          <h1 className="text-3xl font-bold text-text-heading">Sign In</h1>
 
           <p className="mt-2 text-sm text-text-muted">
             Sign in to continue to your account
@@ -105,10 +89,7 @@ export default function LoginPage() {
 
         {/* Login Card */}
         <div className="rounded-xl border border-border-default bg-white p-8 shadow-sm">
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-5"
-          >
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div>
               <label
@@ -123,9 +104,7 @@ export default function LoginPage() {
                 name="email"
                 type="email"
                 value={email}
-                onChange={(e) =>
-                  setEmail(e.target.value)
-                }
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
                 placeholder="you@example.com"
@@ -146,15 +125,9 @@ export default function LoginPage() {
                 <input
                   id="password"
                   name="password"
-                  type={
-                    showPassword
-                      ? "text"
-                      : "password"
-                  }
+                  type={showPassword ? "text" : "password"}
                   value={password}
-                  onChange={(e) =>
-                    setPassword(e.target.value)
-                  }
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
                   placeholder="••••••••"
@@ -164,17 +137,9 @@ export default function LoginPage() {
                 {/* Show / Hide Password */}
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowPassword(
-                      (previous) => !previous,
-                    )
-                  }
+                  onClick={() => setShowPassword((previous) => !previous)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition-colors hover:text-text-heading"
-                  aria-label={
-                    showPassword
-                      ? "Hide password"
-                      : "Show password"
-                  }
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? "🙈" : "👁️"}
                 </button>
@@ -207,9 +172,7 @@ export default function LoginPage() {
               disabled={isSubmitting}
               className="w-full rounded-lg bg-brand-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isSubmitting
-                ? "Signing In..."
-                : "Sign In"}
+              {isSubmitting ? "Signing In..." : "Sign In"}
             </button>
           </form>
 
@@ -230,17 +193,11 @@ export default function LoginPage() {
         {/* Legal */}
         <p className="mt-6 text-center text-xs text-text-muted">
           By signing in, you agree to our{" "}
-          <Link
-            href="/terms"
-            className="text-brand-primary hover:underline"
-          >
+          <Link href="/terms" className="text-brand-primary hover:underline">
             Terms of Service
           </Link>{" "}
           and{" "}
-          <Link
-            href="/privacy"
-            className="text-brand-primary hover:underline"
-          >
+          <Link href="/privacy" className="text-brand-primary hover:underline">
             Privacy Policy
           </Link>
         </p>

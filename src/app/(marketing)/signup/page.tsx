@@ -4,87 +4,226 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { z } from "zod";
+
+const signupSchema = z
+  .object({
+    name: z
+      .string()
+      .trim()
+      .min(2, "Name must be at least 2 characters")
+      .max(100, "Name is too long"),
+
+    clinicName: z
+      .string()
+      .trim()
+      .min(2, "Clinic name must be at least 2 characters")
+      .max(150, "Clinic name is too long"),
+
+    email: z
+      .string()
+      .trim()
+      .email("Enter a valid email"),
+
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(
+        /[A-Z]/,
+        "Password must contain at least one uppercase letter",
+      )
+      .regex(
+        /[a-z]/,
+        "Password must contain at least one lowercase letter",
+      )
+      .regex(
+        /[0-9]/,
+        "Password must contain at least one number",
+      )
+      .regex(
+        /[^A-Za-z0-9]/,
+        "Password must contain at least one symbol",
+      ),
+
+    confirmPassword: z.string(),
+  })
+  .refine(
+    (data) => data.password === data.confirmPassword,
+    {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    },
+  );
+
+type FormData = z.infer<typeof signupSchema>;
+
+function EyeIcon({ open }: { open: boolean }) {
+  if (open) {
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M2 12s3-8 10-8 10 8 10 8-3 8-10 8-10-8-10-8Z" />
+        <circle cx="12" cy="12" r="3" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M3 3l18 18" />
+      <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
+      <path d="M9.9 4.2A10.9 10.9 0 0 1 12 4c7 0 10 8 10 8a18.2 18.2 0 0 1-3 4.4" />
+      <path d="M6.6 6.6C3.7 8.5 2 12 2 12s3 8 10 8a9.8 9.8 0 0 0 3.4-.6" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      className="shrink-0"
+      aria-hidden="true"
+    >
+      <path
+        d="M11.5 3.5L5.5 10L2.5 7"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 export default function SignupPage() {
   const router = useRouter();
 
-  const [name, setName] = useState("");
-  const [clinicName, setClinicName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [form, setForm] = useState<FormData>({
+    name: "",
+    clinicName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState(false);
 
+  const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) {
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (error) {
+      setError("");
+    }
+  }
 
   async function handleSubmit(
     e: React.FormEvent<HTMLFormElement>,
   ) {
     e.preventDefault();
 
-    setError(null);
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-
+    setError("");
     setIsSubmitting(true);
 
     try {
-      // ================================================
-      // CREATE CLINIC + OWNER ACCOUNT
-      // ================================================
+      // -----------------------------------------------
+      // Client-side validation
+      // -----------------------------------------------
 
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-          confirmPassword,
-          clinicName,
-        }),
-      });
+      const parsed = signupSchema.safeParse(form);
 
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
+      if (!parsed.success) {
         setError(
-          data.error ??
-            "Could not create your account. Please try again.",
+          parsed.error.issues[0]?.message ??
+            "Please check your information.",
         );
         return;
       }
 
-      // ================================================
-      // AUTOMATICALLY SIGN IN
-      // ================================================
+      // -----------------------------------------------
+      // Create clinic + owner
+      // -----------------------------------------------
 
-      const loginResult = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
+      const response = await fetch(
+        "/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(parsed.data),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(
+          data?.error ??
+            "Unable to create your clinic account. Please try again.",
+        );
+        return;
+      }
+
+      // -----------------------------------------------
+      // Automatically sign in
+      // -----------------------------------------------
+
+      const loginResult = await signIn(
+        "credentials",
+        {
+          email: parsed.data.email,
+          password: parsed.data.password,
+          redirect: false,
+        },
+      );
 
       if (loginResult?.error) {
-        // Account was successfully created, but automatic
-        // login failed. Send the user to the normal login page.
         router.push("/login");
         return;
       }
 
-      // ================================================
-      // FREE TRIAL → DASHBOARD
-      // ================================================
+      // -----------------------------------------------
+      // Owner dashboard
+      // -----------------------------------------------
 
-      router.push("/dashboard");
+      router.push("/admin");
       router.refresh();
     } catch (error) {
       console.error("SIGNUP_ERROR:", error);
@@ -98,237 +237,340 @@ export default function SignupPage() {
   }
 
   return (
-    <main className="min-h-screen bg-secondary-100 px-6 py-20">
-      <div className="mx-auto max-w-md">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-text-heading">
-            Start Your Free Trial
-          </h1>
+    <main className="min-h-screen bg-secondary-100">
+      {/* =================================================
+          HERO / SIGNUP SECTION
+      ================================================= */}
 
-          <p className="mt-2 text-sm text-text-muted">
-            Create your clinic account and start using
-            the platform.
-          </p>
-        </div>
-
-        {/* Signup Card */}
-        <div className="rounded-xl border border-border-default bg-white p-8 shadow-sm">
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-5"
+      <section className="mx-auto max-w-7xl px-6 py-12 lg:px-10 lg:py-20">
+        <div className="mx-auto max-w-6xl">
+          {/* Back */}
+          <Link
+            href="/"
+            className="text-sm font-medium text-brand-primary hover:underline"
           >
-            {/* Full Name */}
-            <div>
-              <label
-                htmlFor="name"
-                className="mb-1.5 block text-sm font-medium text-text-heading"
-              >
-                Full Name
-              </label>
+            ← Back to Home
+          </Link>
 
-              <input
-                id="name"
-                name="name"
-                type="text"
-                value={name}
-                onChange={(e) =>
-                  setName(e.target.value)
-                }
-                required
-                autoComplete="name"
-                placeholder="Maria Lopez"
-                className="w-full rounded-lg border border-border-default px-4 py-2.5 text-sm text-text-heading placeholder:text-text-disabled focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/50"
-              />
-            </div>
+          <div className="mt-10 grid gap-12 lg:grid-cols-2 lg:items-start">
+            {/* =================================================
+                LEFT SIDE
+            ================================================= */}
 
-            {/* Clinic Name */}
-            <div>
-              <label
-                htmlFor="clinicName"
-                className="mb-1.5 block text-sm font-medium text-text-heading"
-              >
-                Clinic Name
-              </label>
+            <div className="pt-4">
+              <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-brand-primary">
+                Free Trial
+              </p>
 
-              <input
-                id="clinicName"
-                name="clinicName"
-                type="text"
-                value={clinicName}
-                onChange={(e) =>
-                  setClinicName(e.target.value)
-                }
-                required
-                autoComplete="organization"
-                placeholder="Smile Dental Clinic"
-                className="w-full rounded-lg border border-border-default px-4 py-2.5 text-sm text-text-heading placeholder:text-text-disabled focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/50"
-              />
-            </div>
+              <h1 className="text-4xl font-extrabold leading-tight text-text-heading sm:text-5xl">
+                Start Your Free Trial
+              </h1>
 
-            {/* Email */}
-            <div>
-              <label
-                htmlFor="email"
-                className="mb-1.5 block text-sm font-medium text-text-heading"
-              >
-                Email
-              </label>
+              <p className="mt-5 max-w-xl text-base leading-7 text-text-body">
+                Get 30 days of full access to your dental
+                clinic management platform. No credit card
+                required.
+              </p>
 
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={email}
-                onChange={(e) =>
-                  setEmail(e.target.value)
-                }
-                required
-                autoComplete="email"
-                placeholder="you@clinic.com"
-                className="w-full rounded-lg border border-border-default px-4 py-2.5 text-sm text-text-heading placeholder:text-text-disabled focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/50"
-              />
-            </div>
+              <div className="mt-8 space-y-4">
+                {[
+                  "Full access to every module",
+                  "Set up your clinic in minutes",
+                  "Add dentists, managers, and receptionists",
+                  "Manage patients and appointments",
+                  "No credit card required",
+                ].map((item) => (
+                  <div
+                    key={item}
+                    className="flex items-center gap-3"
+                  >
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-100 text-brand-primary">
+                      <CheckIcon />
+                    </span>
 
-            {/* Password */}
-            <div>
-              <label
-                htmlFor="password"
-                className="mb-1.5 block text-sm font-medium text-text-heading"
-              >
-                Password
-              </label>
-
-              <div className="relative">
-                <input
-                  id="password"
-                  name="password"
-                  type={
-                    showPassword
-                      ? "text"
-                      : "password"
-                  }
-                  value={password}
-                  onChange={(e) =>
-                    setPassword(e.target.value)
-                  }
-                  required
-                  autoComplete="new-password"
-                  placeholder="Enter your password"
-                  className="w-full rounded-lg border border-border-default px-4 py-2.5 pr-12 text-sm text-text-heading placeholder:text-text-disabled focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/50"
-                />
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowPassword(
-                      (previous) => !previous,
-                    )
-                  }
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition-colors hover:text-text-heading"
-                  aria-label={
-                    showPassword
-                      ? "Hide password"
-                      : "Show password"
-                  }
-                >
-                  {showPassword ? "🙈" : "👁️"}
-                </button>
+                    <span className="text-sm text-text-body">
+                      {item}
+                    </span>
+                  </div>
+                ))}
               </div>
 
-              <p className="mt-1 text-xs text-text-muted">
-                Use a strong password with uppercase,
-                lowercase, number, and symbol.
-              </p>
-            </div>
+              {/* Trial information */}
+              <div className="mt-10 rounded-2xl border border-neutral-200 bg-white p-6">
+                <p className="text-sm font-semibold text-text-heading">
+                  What happens after signup?
+                </p>
 
-            {/* Confirm Password */}
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="mb-1.5 block text-sm font-medium text-text-heading"
-              >
-                Confirm Password
-              </label>
+                <div className="mt-4 space-y-3 text-sm text-text-body">
+                  <p>
+                    <span className="font-semibold">
+                      1.
+                    </span>{" "}
+                    Your clinic is created.
+                  </p>
 
-              <div className="relative">
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={
-                    showConfirmPassword
-                      ? "text"
-                      : "password"
-                  }
-                  value={confirmPassword}
-                  onChange={(e) =>
-                    setConfirmPassword(
-                      e.target.value,
-                    )
-                  }
-                  required
-                  autoComplete="new-password"
-                  placeholder="Confirm your password"
-                  className="w-full rounded-lg border border-border-default px-4 py-2.5 pr-12 text-sm text-text-heading placeholder:text-text-disabled focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/50"
-                />
+                  <p>
+                    <span className="font-semibold">
+                      2.
+                    </span>{" "}
+                    You become the clinic owner.
+                  </p>
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowConfirmPassword(
-                      (previous) => !previous,
-                    )
-                  }
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition-colors hover:text-text-heading"
-                  aria-label={
-                    showConfirmPassword
-                      ? "Hide password"
-                      : "Show password"
-                  }
-                >
-                  {showConfirmPassword
-                    ? "🙈"
-                    : "👁️"}
-                </button>
+                  <p>
+                    <span className="font-semibold">
+                      3.
+                    </span>{" "}
+                    You are automatically signed in.
+                  </p>
+
+                  <p>
+                    <span className="font-semibold">
+                      4.
+                    </span>{" "}
+                    You can start managing your clinic.
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Error */}
-            {error && (
-              <p
-                role="alert"
-                className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600"
-              >
-                {error}
+            {/* =================================================
+                RIGHT SIDE - FORM
+            ================================================= */}
+
+            <div className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm">
+              <h2 className="text-xl font-bold text-text-heading">
+                Create Your Clinic Account
+              </h2>
+
+              <p className="mt-2 text-sm text-text-muted">
+                You will become the owner of this clinic.
               </p>
-            )}
 
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full rounded-lg bg-brand-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isSubmitting
-                ? "Creating Account..."
-                : "Start Free Trial"}
-            </button>
-          </form>
-
-          {/* Login */}
-          <div className="mt-6 border-t border-border-default pt-6 text-center text-sm">
-            <p className="text-text-muted">
-              Already have an account?{" "}
-              <Link
-                href="/login"
-                className="font-medium text-brand-primary transition-colors hover:text-brand-primary-hover"
+              <form
+                onSubmit={handleSubmit}
+                className="mt-7 space-y-5"
               >
-                Sign in
-              </Link>
-            </p>
+                {/* =================================================
+                    OWNER NAME
+                ================================================= */}
+
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="mb-1.5 block text-sm font-medium text-text-heading"
+                  >
+                    Owner Full Name
+                  </label>
+
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    value={form.name}
+                    onChange={handleChange}
+                    placeholder="Dr. Jane Smith"
+                    autoComplete="name"
+                    disabled={isSubmitting}
+                    className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-text-heading outline-none transition placeholder:text-text-disabled focus:border-brand-primary focus:ring-2 focus:ring-primary-100 disabled:cursor-not-allowed disabled:opacity-60"
+                  />
+                </div>
+
+                {/* =================================================
+                    CLINIC NAME
+                ================================================= */}
+
+                <div>
+                  <label
+                    htmlFor="clinicName"
+                    className="mb-1.5 block text-sm font-medium text-text-heading"
+                  >
+                    Clinic Name
+                  </label>
+
+                  <input
+                    id="clinicName"
+                    name="clinicName"
+                    type="text"
+                    value={form.clinicName}
+                    onChange={handleChange}
+                    placeholder="Smile Dental Clinic"
+                    autoComplete="organization"
+                    disabled={isSubmitting}
+                    className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-text-heading outline-none transition placeholder:text-text-disabled focus:border-brand-primary focus:ring-2 focus:ring-primary-100 disabled:cursor-not-allowed disabled:opacity-60"
+                  />
+                </div>
+
+                {/* =================================================
+                    EMAIL
+                ================================================= */}
+
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="mb-1.5 block text-sm font-medium text-text-heading"
+                  >
+                    Work Email
+                  </label>
+
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="owner@yourclinic.com"
+                    autoComplete="email"
+                    disabled={isSubmitting}
+                    className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-text-heading outline-none transition placeholder:text-text-disabled focus:border-brand-primary focus:ring-2 focus:ring-primary-100 disabled:cursor-not-allowed disabled:opacity-60"
+                  />
+                </div>
+
+                {/* =================================================
+                    PASSWORD
+                ================================================= */}
+
+                <div>
+                  <label
+                    htmlFor="password"
+                    className="mb-1.5 block text-sm font-medium text-text-heading"
+                  >
+                    Password
+                  </label>
+
+                  <div className="relative">
+                    <input
+                      id="password"
+                      name="password"
+                      type={
+                        showPassword
+                          ? "text"
+                          : "password"
+                      }
+                      value={form.password}
+                      onChange={handleChange}
+                      placeholder="Create a strong password"
+                      autoComplete="new-password"
+                      disabled={isSubmitting}
+                      className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 pr-12 text-sm text-text-heading outline-none transition placeholder:text-text-disabled focus:border-brand-primary focus:ring-2 focus:ring-primary-100 disabled:cursor-not-allowed disabled:opacity-60"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowPassword(
+                          (prev) => !prev,
+                        )
+                      }
+                      disabled={isSubmitting}
+                      aria-label={
+                        showPassword
+                          ? "Hide password"
+                          : "Show password"
+                      }
+                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-text-muted transition hover:text-text-heading disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <EyeIcon open={showPassword} />
+                    </button>
+                  </div>
+
+                  <p className="mt-1.5 text-xs text-text-muted">
+                    Minimum 8 characters with uppercase,
+                    lowercase, number, and symbol.
+                  </p>
+                </div>
+
+                {/* =================================================
+                    CONFIRM PASSWORD
+                ================================================= */}
+
+                <div>
+                  <label
+                    htmlFor="confirmPassword"
+                    className="mb-1.5 block text-sm font-medium text-text-heading"
+                  >
+                    Confirm Password
+                  </label>
+
+                  <div className="relative">
+                    <input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={
+                        showConfirmPassword
+                          ? "text"
+                          : "password"
+                      }
+                      value={form.confirmPassword}
+                      onChange={handleChange}
+                      placeholder="Confirm your password"
+                      autoComplete="new-password"
+                      disabled={isSubmitting}
+                      className="w-full rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3 pr-12 text-sm text-text-heading outline-none transition placeholder:text-text-disabled focus:border-brand-primary focus:ring-2 focus:ring-primary-100 disabled:cursor-not-allowed disabled:opacity-60"
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(
+                          (prev) => !prev,
+                        )
+                      }
+                      disabled={isSubmitting}
+                      aria-label={
+                        showConfirmPassword
+                          ? "Hide confirm password"
+                          : "Show confirm password"
+                      }
+                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-text-muted transition hover:text-text-heading disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <EyeIcon
+                        open={showConfirmPassword}
+                      />
+                    </button>
+                  </div>
+                </div>
+
+                {/* =================================================
+                    ERROR
+                ================================================= */}
+
+                {error && (
+                  <div
+                    role="alert"
+                    className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600"
+                  >
+                    {error}
+                  </div>
+                )}
+
+                {/* =================================================
+                    SUBMIT
+                ================================================= */}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full rounded-xl bg-brand-primary px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-brand-primary-hover disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isSubmitting
+                    ? "Creating Clinic..."
+                    : "Start Free Trial"}
+                </button>
+              </form>
+
+              <p className="mt-5 text-center text-xs text-text-muted">
+                Already have an account?{" "}
+                <Link
+                  href="/login"
+                  className="font-medium text-brand-primary hover:underline"
+                >
+                  Sign in
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     </main>
   );
 }
