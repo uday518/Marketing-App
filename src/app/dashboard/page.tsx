@@ -124,7 +124,7 @@ export default async function DashboardPage() {
   const roleLabel = session.user.role ? session.user.role[0].toUpperCase() + session.user.role.slice(1) : '';
 
   return (
-    <main className="min-h-screen bg-page px-6 py-10">
+    <main className="min-h-screen bg-gradient-to-br from-[#0D7A97] to-[#F04E28] px-6 py-10">
       <div className="mx-auto max-w-6xl">
         <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
