@@ -10,7 +10,7 @@ export default function StatCard({
   icon: ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-border-default bg-white p-5 shadow-sm">
+    <div className="rounded-2xl border border-border-default bg-white bg-opacity-70 backdrop-blur-xl p-5 shadow-sm transition-transform hover:scale-105">
       <div className="flex items-center justify-between">
         <p className="text-sm text-text-muted">{label}</p>
         <span className="text-brand-primary">{icon}</span>
