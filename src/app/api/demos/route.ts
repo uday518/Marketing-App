@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
-import { Contact } from "@/models/Contact";
+import { ContactMessage } from "@/lib/models";
 
 // GET all demo requests
 export async function GET() {
   try {
     await connectToDatabase();
 
-    const demos = await Contact.find({
+    const demos = await ContactMessage.find({
       preferredDate: { $exists: true, $ne: null },
       preferredTime: { $exists: true, $ne: "" },
     }).sort({

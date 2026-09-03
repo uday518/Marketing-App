@@ -3,9 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
 import { connectToDatabase } from "./db";
-import { Patient } from "@/models/Patient";
-import { User } from "@/models/User";
-import { PlatformAdmin } from "@/models/Platform-Admin";
+import { Patient, User, PlatformAdmin } from "@/lib/models";
 import { checkRateLimit } from "./rate-limit";
 
 const MAX_LOGIN_ATTEMPTS = 5;
@@ -38,7 +36,8 @@ export const authOptions: NextAuthOptions = {
         },
       },
 
-      async authorize(credentials) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      async authorize(credentials: Record<"email" | "password", string> | undefined, _req: any): Promise<any> {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
@@ -145,6 +144,8 @@ export const authOptions: NextAuthOptions = {
 
             role: user.role,
 
+            platformRole: undefined as string | undefined,
+
             clinicId: user.clinicId
               ? user.clinicId.toString()
               : null,
@@ -160,9 +161,10 @@ export const authOptions: NextAuthOptions = {
         // 3. PATIENT
         // ================================================
 
-        const patient = await Patient.findOne({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const patient: any = await Patient.findOne({
           email,
-        }).select("+password");
+        });
 
         if (patient && patient.password) {
           const isValid = await bcrypt.compare(
@@ -180,6 +182,8 @@ export const authOptions: NextAuthOptions = {
             name: patient.fullName,
 
             role: "patient",
+
+            platformRole: undefined as string | undefined,
 
             clinicId: patient.clinicId
               ? patient.clinicId.toString()

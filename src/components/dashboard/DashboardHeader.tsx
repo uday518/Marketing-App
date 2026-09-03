@@ -21,7 +21,7 @@ export default function DashboardHeader({ clinicName, roleLabel, greeting, first
           <h1 className="mt-1 text-2xl font-bold text-text-heading">
             {greeting}, {firstName}
           </h1>
-          <p className="mt-1 text-sm text-text-muted">Here's what's happening at your clinic today.</p>
+          <p className="mt-1 text-sm text-text-muted">Here&apos;s what&apos;s happening at your clinic today.</p>
         </div>
         <div className="flex items-center gap-3">
           <GlobalSearch />

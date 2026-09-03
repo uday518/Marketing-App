@@ -163,8 +163,12 @@ export default async function DashboardPage() {
 
       Encounter.countDocuments(clinicFilter),
 
-      Appointment.find(clinicFilter)
-        .sort({ dateTime: -1 })
+      Appointment.find({
+        ...clinicFilter,
+        dateTime: { $gte: now },
+        status: { $nin: ['cancelled', 'completed', 'no-show'] },
+      })
+        .sort({ dateTime: 1 })
         .limit(5)
         .lean(),
 
@@ -310,7 +314,7 @@ export default async function DashboardPage() {
                   transition hover:bg-white/90
                 "
               >
-                + New appointment
+                + New Appointment
               </Link>
             </div>
           </div>
@@ -363,7 +367,7 @@ export default async function DashboardPage() {
                 {appointments.length === 0 ? (
                   <div className="py-8 text-center">
                     <p className="text-sm text-neutral-500">
-                      No appointments yet.
+                      No upcoming appointments yet.
                     </p>
 
                     <Link

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
-import { Contact } from "@/models/Contact";
+import { ContactMessage } from "@/lib/models";
 
 const VALID_DEMO_STATUSES = [
   "Requested",
@@ -44,7 +44,7 @@ export async function PATCH(
 
     // Update only demoStatus.
     // This avoids re-validating old Contact fields.
-    const demo = await Contact.findByIdAndUpdate(
+    const demo = await ContactMessage.findByIdAndUpdate(
       id,
       {
         $set: {

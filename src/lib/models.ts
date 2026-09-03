@@ -42,7 +42,7 @@ const patientSchema = new Schema(
     medicalHistory: [{ condition: String, notes: String }],
     insurance: { type: String, default: '' },
     clinicId: { type: Schema.Types.ObjectId, ref: 'Clinic', default: null },
-    password: { type: String, select: false },
+    password: { type: String, default: null },
     passwordChangedAt: { type: Date, default: null },
   },
   { timestamps: true },
@@ -133,6 +133,19 @@ const contactMessageSchema = new Schema(
   { timestamps: true },
 );
 
+const platformAdminSchema = new Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    passwordHash: { type: String, required: true },
+    role: { type: String, default: 'admin' },
+    isActive: { type: Boolean, default: true },
+    passwordChangedAt: { type: Date, default: null },
+    lastLoginAt: { type: Date, default: null },
+  },
+  { timestamps: true },
+);
+
 const passwordResetTokenSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
@@ -143,14 +156,21 @@ const passwordResetTokenSchema = new Schema(
 );
 
 type UserDoc = InferSchemaType<typeof userSchema>;
-type PatientDoc = InferSchemaType<typeof patientSchema>;
+type PatientDoc = InferSchemaType<typeof patientSchema> & {
+  password?: string | null;
+  passwordChangedAt?: Date | null;
+};
 type AppointmentDoc = InferSchemaType<typeof appointmentSchema>;
 type ClinicDoc = InferSchemaType<typeof clinicSchema>;
 type EncounterDoc = InferSchemaType<typeof encounterSchema>;
 type TreatmentPlanDoc = InferSchemaType<typeof treatmentPlanSchema>;
-type QueueEntryDoc = InferSchemaType<typeof queueEntrySchema>;
+type QueueEntryDoc = InferSchemaType<typeof queueEntrySchema> & {
+  calledAt?: Date | null;
+  completedAt?: Date | null;
+};
 type AuditLogDoc = InferSchemaType<typeof auditLogSchema>;
 type ContactMessageDoc = InferSchemaType<typeof contactMessageSchema>;
+type PlatformAdminDoc = InferSchemaType<typeof platformAdminSchema>;
 type PasswordResetTokenDoc = InferSchemaType<typeof passwordResetTokenSchema>;
 
 function model<T>(name: string, schema: Schema): Model<T> {
@@ -167,6 +187,7 @@ export const Encounter = model<EncounterDoc>('Encounter', encounterSchema);
 export const TreatmentPlan = model<TreatmentPlanDoc>('TreatmentPlan', treatmentPlanSchema);
 export const AuditLog = model<AuditLogDoc>('AuditLog', auditLogSchema);
 export const ContactMessage = model<ContactMessageDoc>('ContactMessage', contactMessageSchema);
+export const PlatformAdmin = model<PlatformAdminDoc>('PlatformAdmin', platformAdminSchema);
 export const PasswordResetToken = model<PasswordResetTokenDoc>(
   'PasswordResetToken',
   passwordResetTokenSchema,
@@ -182,5 +203,6 @@ export type {
   QueueEntryDoc,
   AuditLogDoc,
   ContactMessageDoc,
+  PlatformAdminDoc,
   PasswordResetTokenDoc,
 };
