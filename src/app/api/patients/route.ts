@@ -3,8 +3,7 @@ import { getServerSession } from 'next-auth';
 import { z } from 'zod';
 import { authOptions } from '@/lib/auth';
 import { connectToDatabase } from '@/lib/db';
-import { Patient } from '@/models/Patient';
-import { Clinic } from '@/models/Clinic';
+import { Patient } from '@/lib/models';
 
 const patientSchema = z.object({
   fullName: z.string().min(1, 'Full name is required').trim(),
@@ -35,6 +34,8 @@ const patientSchema = z.object({
     .default([]),
 
   insurance: z.string().default(''),
+
+  clinicId: z.string().optional(),
 });
 
 export async function GET() {
@@ -50,17 +51,14 @@ export async function GET() {
 
     await connectToDatabase();
 
-    let clinicId = session.user.clinicId;
+    const clinicId = session.user.clinicId;
+
     if (!clinicId) {
-      let fromDb = await Clinic.findOne().lean();
-      if (!fromDb) {
-        fromDb = await Clinic.create({ name: 'Default Test Clinic' });
-      }
-      clinicId = fromDb._id.toString();
+      return NextResponse.json([], { status: 200 });
     }
 
     const patients = await Patient.find({
-      clinicId: clinicId,
+      clinicId,
     })
       .sort({ createdAt: -1 })
       .lean();
@@ -103,18 +101,11 @@ export async function POST(request: Request) {
 
     await connectToDatabase();
 
-    let clinicId = session.user.clinicId;
-    if (!clinicId) {
-      let fromDb = await Clinic.findOne().lean();
-      if (!fromDb) {
-        fromDb = await Clinic.create({ name: 'Default Test Clinic' });
-      }
-      clinicId = fromDb._id.toString();
-    }
+    const clinicId = session.user.clinicId || parsed.data.clinicId || null;
 
     const patient = await Patient.create({
       ...parsed.data,
-      clinicId: clinicId,
+      clinicId,
     });
 
     return NextResponse.json(patient, { status: 201 });

@@ -4,9 +4,7 @@ import { z } from 'zod';
 import mongoose from 'mongoose';
 import { authOptions } from '@/lib/auth';
 import { connectToDatabase } from '@/lib/db';
-import { Appointment } from '@/models/Appointment';
-import { Patient } from '@/models/Patient';
-import { User } from '@/models/User';
+import { Appointment, Patient, User } from '@/lib/models';
 
 const updateAppointmentSchema = z.object({
     patientId: z

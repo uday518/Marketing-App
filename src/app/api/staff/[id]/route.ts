@@ -5,7 +5,7 @@ import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { authOptions } from '@/lib/auth';
 import { connectToDatabase } from '@/lib/db';
-import { User } from '@/models/User';
+import { User } from '@/lib/models';
 import { strongPassword } from '@/lib/validations';
 
 const updateStaffSchema = z.object({

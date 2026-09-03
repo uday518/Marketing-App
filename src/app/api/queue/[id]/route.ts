@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { z } from 'zod';
 import { authOptions } from '@/lib/auth';
 import { connectToDatabase } from '@/lib/db';
-import { QueueEntry } from '@/models/QueueEntry';
+import { QueueEntry } from '@/lib/models';
 
 const updateQueueSchema = z.object({
     status: z.enum([

@@ -3,9 +3,7 @@ import { getServerSession } from 'next-auth';
 import { z } from 'zod';
 import { authOptions } from '@/lib/auth';
 import { connectToDatabase } from '@/lib/db';
-import { Appointment } from '@/models/Appointment';
-import { Patient } from '@/models/Patient';
-import { User } from '@/models/User';
+import { Appointment, Patient, User } from '@/lib/models';
 
 const appointmentSchema = z.object({
     patientId: z.string().min(1, 'Patient is required'),
@@ -15,6 +13,8 @@ const appointmentSchema = z.object({
         .optional()
         .nullable()
         .default(null),
+
+    clinicId: z.string().optional(),
 
     dateTime: z.coerce.date({
         message: 'Valid appointment date and time is required',
@@ -84,13 +84,6 @@ export async function POST(request: Request) {
             );
         }
 
-        if (!session.user.clinicId) {
-            return NextResponse.json(
-                { error: 'No clinic associated with this account' },
-                { status: 403 },
-            );
-        }
-
         const body = await request.json().catch(() => null);
 
         const parsed = appointmentSchema.safeParse(body);
@@ -109,17 +102,27 @@ export async function POST(request: Request) {
         const {
             patientId,
             dentistId,
+            clinicId: bodyClinicId,
             dateTime,
             status,
             notes,
         } = parsed.data;
+
+        const clinicId = session.user.clinicId || bodyClinicId;
+
+        if (!clinicId) {
+            return NextResponse.json(
+                { error: 'No clinic associated with this account' },
+                { status: 403 },
+            );
+        }
 
         await connectToDatabase();
 
         // Make sure the patient belongs to this clinic.
         const patient = await Patient.findOne({
             _id: patientId,
-            clinicId: session.user.clinicId,
+            clinicId,
         });
 
         if (!patient) {
@@ -134,7 +137,7 @@ export async function POST(request: Request) {
         if (dentistId) {
             const dentist = await User.findOne({
                 _id: dentistId,
-                clinicId: session.user.clinicId,
+                clinicId,
                 role: 'dentist',
             });
 
@@ -149,7 +152,7 @@ export async function POST(request: Request) {
         const appointment = await Appointment.create({
             patientId,
             dentistId: dentistId || null,
-            clinicId: session.user.clinicId,
+            clinicId,
             dateTime,
             status,
             notes,
