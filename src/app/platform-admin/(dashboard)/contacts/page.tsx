@@ -2,22 +2,22 @@
 
 import { useEffect, useState } from "react";
 import PageHeader from "@/components/admin/shared/PageHeader";
-import DataTable, { Column } from "@/components/admin/shared/DataTable";
+import DataTable, {
+  Column,
+} from "@/components/admin/shared/DataTable";
 import StatusBadge from "@/components/admin/shared/StatusBadge";
 
 interface Contact {
   _id: string;
+
   name: string;
   email: string;
   phone: string;
-  company: string;
-  clinicSize: string;
+  company?: string;
+  clinicSize?: string;
 
   type: "Clinic Owner" | "Lead";
   status: "Active" | "Inactive";
-
-  preferredDate: string;
-  preferredTime: string;
 
   notes?: string;
 
@@ -43,12 +43,14 @@ const columns: Column<Contact>[] = [
 
   {
     key: "company",
-    label: "Clinic",
+    label: "Company",
+    render: (item) => item.company || "-",
   },
 
   {
     key: "clinicSize",
     label: "Clinic Size",
+    render: (item) => item.clinicSize || "-",
   },
 
   {
@@ -57,29 +59,18 @@ const columns: Column<Contact>[] = [
   },
 
   {
-    key: "preferredDate",
-    label: "Demo Date",
-    render: (item) =>
-      item.preferredDate
-        ? new Date(
-            item.preferredDate
-          ).toLocaleDateString()
-        : "-",
-  },
-
-  {
-    key: "preferredTime",
-    label: "Demo Time",
-    render: (item) =>
-      item.preferredTime || "-",
-  },
-
-  {
     key: "status",
     label: "Status",
     render: (item) => (
-      <StatusBadge status={item.status} />
+      <StatusBadge status={item.status || "Inactive"} />
     ),
+  },
+
+  {
+    key: "createdAt",
+    label: "Created",
+    render: (item) =>
+      new Date(item.createdAt).toLocaleDateString(),
   },
 ];
 
@@ -95,7 +86,10 @@ export default function ContactsPage() {
         setLoading(true);
         setError("");
 
-        const response = await fetch("/api/contact");
+        // NEW PLATFORM ADMIN CONTACT API
+        const response = await fetch(
+          "/api/platform-admin/contacts"
+        );
 
         if (!response.ok) {
           throw new Error(
@@ -105,14 +99,15 @@ export default function ContactsPage() {
 
         const data = await response.json();
 
-        if (data.success) {
-          setContacts(data.contacts);
-        } else {
+        if (!data.success) {
           throw new Error(
             data.message ||
               "Failed to fetch contacts"
           );
         }
+
+        // Adjust this depending on your API response
+        setContacts(data.data || []);
       } catch (error) {
         console.error(
           "Failed to fetch contacts:",
@@ -154,10 +149,9 @@ export default function ContactsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
       <PageHeader
         title="Contacts"
-        description="Manage demo requests and contact inquiries"
+        description="Manage platform contacts and inquiries"
       />
 
       {/* Status Filters */}
@@ -189,14 +183,14 @@ export default function ContactsPage() {
         )}
       </div>
 
-      {/* Loading State */}
+      {/* Loading */}
       {loading && (
         <div className="py-10 text-center text-text-body">
           Loading contacts...
         </div>
       )}
 
-      {/* Error State */}
+      {/* Error */}
       {!loading && error && (
         <div className="rounded-md border border-red-200 bg-red-50 p-4 text-red-600">
           {error}
