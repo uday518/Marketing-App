@@ -12,22 +12,24 @@ interface DemoRequest {
   phone: string;
   company: string;
   clinicSize: string;
-  type: "Clinic Owner" | "Lead";
-  status: "Active" | "Inactive";
+
   preferredDate: string;
   preferredTime: string;
-  demoStatus:
+
+  status:
     | "Requested"
     | "Confirmed"
     | "Completed"
     | "Cancelled"
     | "No Show";
+
   notes?: string;
+
   createdAt: string;
   updatedAt: string;
 }
 
-type DemoStatus = DemoRequest["demoStatus"];
+type DemoStatus = DemoRequest["status"];
 
 export default function DemoRequestsPage() {
   const [demos, setDemos] = useState<DemoRequest[]>([]);
@@ -42,27 +44,39 @@ export default function DemoRequestsPage() {
   const [selectedDemo, setSelectedDemo] =
     useState<DemoRequest | null>(null);
 
+  // --------------------------------------------------
   // Fetch demo requests
+  // --------------------------------------------------
+
   const fetchDemos = async () => {
     try {
       setLoading(true);
       setError("");
 
-      const response = await fetch("/api/demos");
+      const response = await fetch(
+        "/api/platform-admin/demos",
+        {
+          method: "GET",
+          cache: "no-store",
+        }
+      );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch demo requests");
+        throw new Error(
+          "Failed to fetch demo requests"
+        );
       }
 
       const data = await response.json();
 
       if (!data.success) {
         throw new Error(
-          data.message || "Failed to fetch demo requests"
+          data.message ||
+            "Failed to fetch demo requests"
         );
       }
 
-      setDemos(data.demos);
+      setDemos(data.data || []);
     } catch (error) {
       console.error(
         "Failed to fetch demo requests:",
@@ -70,7 +84,9 @@ export default function DemoRequestsPage() {
       );
 
       setError(
-        "Failed to load demo requests. Please try again."
+        error instanceof Error
+          ? error.message
+          : "Failed to load demo requests. Please try again."
       );
     } finally {
       setLoading(false);
@@ -81,30 +97,37 @@ export default function DemoRequestsPage() {
     fetchDemos();
   }, []);
 
+  // --------------------------------------------------
   // Update demo status
+  // --------------------------------------------------
+
   const updateDemoStatus = async (
     id: string,
-    demoStatus: DemoStatus
+    status: DemoStatus
   ) => {
     try {
       setUpdatingId(id);
       setError("");
 
-      const response = await fetch(`/api/demos/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          demoStatus,
-        }),
-      });
+      const response = await fetch(
+        `/api/platform-admin/demos/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status,
+          }),
+        }
+      );
 
       const data = await response.json();
 
       if (!response.ok || !data.success) {
         throw new Error(
-          data.message || "Failed to update demo status"
+          data.message ||
+            "Failed to update demo status"
         );
       }
 
@@ -114,7 +137,10 @@ export default function DemoRequestsPage() {
           demo._id === id
             ? {
                 ...demo,
-                demoStatus: data.demo.demoStatus,
+                status: data.data.status,
+                updatedAt:
+                  data.data.updatedAt ??
+                  demo.updatedAt,
               }
             : demo
         )
@@ -122,10 +148,14 @@ export default function DemoRequestsPage() {
 
       // Update modal data if this demo is currently open
       setSelectedDemo((currentDemo) =>
-        currentDemo && currentDemo._id === id
+        currentDemo &&
+        currentDemo._id === id
           ? {
               ...currentDemo,
-              demoStatus: data.demo.demoStatus,
+              status: data.data.status,
+              updatedAt:
+                data.data.updatedAt ??
+                currentDemo.updatedAt,
             }
           : currentDemo
       );
@@ -145,29 +175,37 @@ export default function DemoRequestsPage() {
     }
   };
 
+  // --------------------------------------------------
+  // Status counts
+  // --------------------------------------------------
+
   const statusCounts = {
     all: demos.length,
 
     Requested: demos.filter(
-      (demo) => demo.demoStatus === "Requested"
+      (demo) => demo.status === "Requested"
     ).length,
 
     Confirmed: demos.filter(
-      (demo) => demo.demoStatus === "Confirmed"
+      (demo) => demo.status === "Confirmed"
     ).length,
 
     Completed: demos.filter(
-      (demo) => demo.demoStatus === "Completed"
+      (demo) => demo.status === "Completed"
     ).length,
 
     Cancelled: demos.filter(
-      (demo) => demo.demoStatus === "Cancelled"
+      (demo) => demo.status === "Cancelled"
     ).length,
 
     "No Show": demos.filter(
-      (demo) => demo.demoStatus === "No Show"
+      (demo) => demo.status === "No Show"
     ).length,
   };
+
+  // --------------------------------------------------
+  // Filters
+  // --------------------------------------------------
 
   const filters = [
     "all",
@@ -182,26 +220,34 @@ export default function DemoRequestsPage() {
     filter === "all"
       ? demos
       : demos.filter(
-          (demo) => demo.demoStatus === filter
+          (demo) => demo.status === filter
         );
+
+  // --------------------------------------------------
+  // Table columns
+  // --------------------------------------------------
 
   const columns: Column<DemoRequest>[] = [
     {
       key: "company",
       label: "Clinic",
     },
+
     {
       key: "name",
       label: "Name",
     },
+
     {
       key: "email",
       label: "Email",
     },
+
     {
       key: "phone",
       label: "Phone",
     },
+
     {
       key: "preferredDate",
       label: "Demo Date",
@@ -212,19 +258,22 @@ export default function DemoRequestsPage() {
             ).toLocaleDateString()
           : "-",
     },
+
     {
       key: "preferredTime",
       label: "Demo Time",
       render: (item) =>
         item.preferredTime || "-",
     },
+
     {
-      key: "demoStatus",
+      key: "status",
       label: "Status",
       render: (item) => (
-        <StatusBadge status={item.demoStatus} />
+        <StatusBadge status={item.status} />
       ),
     },
+
     {
       key: "actions",
       label: "Actions",
@@ -237,7 +286,8 @@ export default function DemoRequestsPage() {
           );
         }
 
-        if (item.demoStatus === "Requested") {
+        // Requested → Confirm
+        if (item.status === "Requested") {
           return (
             <button
               onClick={(event) => {
@@ -255,7 +305,8 @@ export default function DemoRequestsPage() {
           );
         }
 
-        if (item.demoStatus === "Confirmed") {
+        // Confirmed → Complete / Cancel / No Show
+        if (item.status === "Confirmed") {
           return (
             <div className="flex flex-wrap gap-2">
               <button
@@ -303,6 +354,7 @@ export default function DemoRequestsPage() {
           );
         }
 
+        // Completed / Cancelled / No Show
         return (
           <span className="text-xs text-text-muted">
             —
@@ -312,9 +364,14 @@ export default function DemoRequestsPage() {
     },
   ];
 
+  // --------------------------------------------------
+  // Render
+  // --------------------------------------------------
+
   return (
     <>
       <div className="space-y-6">
+        {/* Page Header */}
         <PageHeader
           title="Demo Requests"
           description="Manage demo requests from potential clinics"
@@ -373,7 +430,10 @@ export default function DemoRequestsPage() {
         )}
       </div>
 
-      {/* Demo Details Modal */}
+      {/* ==================================================
+          Demo Details Modal
+          ================================================== */}
+
       {selectedDemo && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
@@ -381,7 +441,9 @@ export default function DemoRequestsPage() {
         >
           <div
             className="w-full max-w-2xl rounded-2xl bg-white shadow-xl"
-            onClick={(event) => event.stopPropagation()}
+            onClick={(event) =>
+              event.stopPropagation()
+            }
           >
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-border-default px-6 py-5">
@@ -391,7 +453,8 @@ export default function DemoRequestsPage() {
                 </h2>
 
                 <p className="mt-1 text-sm text-text-muted">
-                  Full information about this demo request
+                  Full information about this demo
+                  request
                 </p>
               </div>
 
@@ -409,31 +472,16 @@ export default function DemoRequestsPage() {
             {/* Modal Body */}
             <div className="max-h-[70vh] overflow-y-auto px-6 py-6">
               <div className="space-y-6">
-
                 {/* Status */}
-                <div className="flex items-center justify-between rounded-lg border border-border-default bg-neutral-50 p-4">
-                  <div>
-                    <p className="text-xs font-medium uppercase tracking-wide text-text-muted">
-                      Demo Status
-                    </p>
+                <div className="rounded-lg border border-border-default bg-neutral-50 p-4">
+                  <p className="text-xs font-medium uppercase tracking-wide text-text-muted">
+                    Demo Status
+                  </p>
 
-                    <div className="mt-2">
-                      <StatusBadge
-                        status={
-                          selectedDemo.demoStatus
-                        }
-                      />
-                    </div>
-                  </div>
-
-                  <div className="text-right">
-                    <p className="text-xs font-medium uppercase tracking-wide text-text-muted">
-                      Contact Type
-                    </p>
-
-                    <p className="mt-1 text-sm font-semibold text-text-heading">
-                      {selectedDemo.type}
-                    </p>
+                  <div className="mt-2">
+                    <StatusBadge
+                      status={selectedDemo.status}
+                    />
                   </div>
                 </div>
 
@@ -475,7 +523,9 @@ export default function DemoRequestsPage() {
 
                     <DetailItem
                       label="Clinic Size"
-                      value={selectedDemo.clinicSize}
+                      value={
+                        selectedDemo.clinicSize
+                      }
                     />
                   </div>
                 </div>
@@ -557,8 +607,8 @@ export default function DemoRequestsPage() {
 
             {/* Modal Footer */}
             <div className="flex flex-wrap justify-end gap-2 border-t border-border-default px-6 py-4">
-
-              {selectedDemo.demoStatus ===
+              {/* Requested */}
+              {selectedDemo.status ===
                 "Requested" && (
                 <button
                   disabled={
@@ -578,12 +628,14 @@ export default function DemoRequestsPage() {
                 </button>
               )}
 
-              {selectedDemo.demoStatus ===
+              {/* Confirmed */}
+              {selectedDemo.status ===
                 "Confirmed" && (
                 <>
                   <button
                     disabled={
-                      updatingId === selectedDemo._id
+                      updatingId ===
+                      selectedDemo._id
                     }
                     onClick={() =>
                       updateDemoStatus(
@@ -593,12 +645,16 @@ export default function DemoRequestsPage() {
                     }
                     className="rounded-md bg-success-500 px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Complete
+                    {updatingId ===
+                    selectedDemo._id
+                      ? "Updating..."
+                      : "Complete"}
                   </button>
 
                   <button
                     disabled={
-                      updatingId === selectedDemo._id
+                      updatingId ===
+                      selectedDemo._id
                     }
                     onClick={() =>
                       updateDemoStatus(
@@ -613,7 +669,8 @@ export default function DemoRequestsPage() {
 
                   <button
                     disabled={
-                      updatingId === selectedDemo._id
+                      updatingId ===
+                      selectedDemo._id
                     }
                     onClick={() =>
                       updateDemoStatus(
@@ -628,6 +685,7 @@ export default function DemoRequestsPage() {
                 </>
               )}
 
+              {/* Close */}
               <button
                 onClick={() =>
                   setSelectedDemo(null)

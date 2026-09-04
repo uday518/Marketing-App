@@ -211,7 +211,7 @@ export default function DemoPageContent() {
     setError("");
 
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch("/api/platform-admin/demos", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -221,7 +221,7 @@ export default function DemoPageContent() {
 
       const data = await response.json();
 
-      if (!response.ok) {
+      if (!response.ok || !data.success) {
         throw new Error(
           data.message || "Failed to submit demo request."
         );

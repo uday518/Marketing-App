@@ -13,11 +13,9 @@ interface DemoRequest {
   phone: string;
   company: string;
   clinicSize: string;
-  type: "Clinic Owner" | "Lead";
-  status: "Active" | "Inactive";
   preferredDate: string;
   preferredTime: string;
-  demoStatus:
+  status:
     | "Requested"
     | "Confirmed"
     | "Completed"
@@ -34,9 +32,20 @@ interface Lead {
   email: string;
   phone: string;
   company: string;
-  status: string;
-  type: string;
+  clinicSize: string;
+  source: string;
+  status:
+    | "New"
+    | "Contacted"
+    | "Qualified"
+    | "Demo Scheduled"
+    | "Demo Completed"
+    | "Proposal"
+    | "Converted"
+    | "Lost";
+  notes?: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 /* ----------------------------------------
@@ -241,7 +250,7 @@ export default function PlatformAdminDashboardPage() {
         setLoadingDemos(true);
         setDemoError("");
 
-        const response = await fetch("/api/demos");
+        const response = await fetch("/api/platform-admin/demos");
 
         if (!response.ok) {
           throw new Error("Failed to fetch demo requests");
@@ -255,7 +264,7 @@ export default function PlatformAdminDashboardPage() {
           );
         }
 
-        setDemos(data.demos || []);
+        setDemos(data.data || []);
       } catch (error) {
         console.error(
           "Failed to fetch demo requests:",
@@ -276,51 +285,44 @@ export default function PlatformAdminDashboardPage() {
   ---------------------------------------- */
 
   useEffect(() => {
-    const fetchLeads = async () => {
-      try {
-        setLoadingLeads(true);
-        setLeadError("");
+  const fetchLeads = async () => {
+    try {
+      setLoadingLeads(true);
+      setLeadError("");
 
-        const response = await fetch("/api/contact");
+      const response = await fetch("/api/platform-admin/leads");
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch contacts");
-        }
-
-        const data = await response.json();
-
-        if (!data.success) {
-          throw new Error(
-            data.message || "Failed to fetch contacts"
-          );
-        }
-
-        const contactLeads = (data.contacts || []).filter(
-          (contact: Lead) => contact.type === "Lead"
-        );
-
-        setLeads(contactLeads);
-      } catch (error) {
-        console.error(
-          "Failed to fetch leads:",
-          error
-        );
-
-        setLeadError("Failed to load leads.");
-      } finally {
-        setLoadingLeads(false);
+      if (!response.ok) {
+        throw new Error("Failed to fetch leads");
       }
-    };
 
-    fetchLeads();
-  }, []);
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(
+          data.message || "Failed to fetch leads"
+        );
+      }
+
+      setLeads(data.data || []);
+    } catch (error) {
+      console.error("Failed to fetch leads:", error);
+
+      setLeadError("Failed to load leads.");
+    } finally {
+      setLoadingLeads(false);
+    }
+  };
+
+  fetchLeads();
+}, []);
 
   /* ----------------------------------------
      REAL DEMO REQUEST COUNT
   ---------------------------------------- */
 
  const demoRequestsCount = demos.filter(
-  (demo) => demo.demoStatus === "Requested"
+  (demo) => demo.status === "Requested"
 ).length;
 
   /* ----------------------------------------
@@ -346,7 +348,7 @@ export default function PlatformAdminDashboardPage() {
     email: demo.email,
     phone: demo.phone,
     company: demo.company,
-    status: demo.demoStatus,
+    status: demo.status,
     date: demo.preferredDate,
   }));
 
@@ -530,7 +532,7 @@ export default function PlatformAdminDashboardPage() {
             description="Latest sales leads and prospects"
             action={{
               label: "View All",
-              href: "/platform-admin/contacts",
+              href: "/platform-admin/leads",
             }}
           />
 
