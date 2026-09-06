@@ -13,10 +13,7 @@ interface RouteParams {
    GET SINGLE CONTACT
 ---------------------------------------- */
 
-export async function GET(
-  _request: NextRequest,
-  { params }: RouteParams
-) {
+export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     await connectToDatabase();
 
@@ -28,7 +25,7 @@ export async function GET(
           success: false,
           message: "Invalid contact ID",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -40,7 +37,7 @@ export async function GET(
           success: false,
           message: "Contact not found",
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -56,7 +53,7 @@ export async function GET(
         success: false,
         message: "Failed to fetch contact",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -65,10 +62,7 @@ export async function GET(
    UPDATE CONTACT
 ---------------------------------------- */
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: RouteParams
-) {
+export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
     await connectToDatabase();
 
@@ -80,7 +74,7 @@ export async function PATCH(
           success: false,
           message: "Invalid contact ID",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -91,6 +85,8 @@ export async function PATCH(
       "email",
       "phone",
       "company",
+      "subject",
+      "message",
       "source",
       "status",
       "notes",
@@ -104,14 +100,10 @@ export async function PATCH(
       }
     }
 
-    const contact = await PlatformContact.findByIdAndUpdate(
-      id,
-      updateData,
-      {
-        new: true,
-        runValidators: true,
-      }
-    ).lean();
+    const contact = await PlatformContact.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+    }).lean();
 
     if (!contact) {
       return NextResponse.json(
@@ -119,7 +111,7 @@ export async function PATCH(
           success: false,
           message: "Contact not found",
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -136,7 +128,7 @@ export async function PATCH(
         success: false,
         message: "Failed to update contact",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -145,10 +137,7 @@ export async function PATCH(
    DELETE CONTACT
 ---------------------------------------- */
 
-export async function DELETE(
-  _request: NextRequest,
-  { params }: RouteParams
-) {
+export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
     await connectToDatabase();
 
@@ -160,7 +149,7 @@ export async function DELETE(
           success: false,
           message: "Invalid contact ID",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -172,7 +161,7 @@ export async function DELETE(
           success: false,
           message: "Contact not found",
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -189,7 +178,7 @@ export async function DELETE(
         success: false,
         message: "Failed to delete contact",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -2,6 +2,16 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import {
+  Building2,
+  CircleCheck,
+  Clock3,
+  ArrowRight,
+  UserPlus,
+  DollarSign,
+  CreditCard,
+  ChartNoAxesCombined,
+} from "lucide-react";
 import StatCard from "@/components/admin/dashboard/StatCard";
 import PageHeader from "@/components/admin/shared/PageHeader";
 import PlatformDashboard from "@/components/admin/platform/PlatformDashboard";
@@ -15,12 +25,7 @@ interface DemoRequest {
   clinicSize: string;
   preferredDate: string;
   preferredTime: string;
-  status:
-    | "Requested"
-    | "Confirmed"
-    | "Completed"
-    | "Cancelled"
-    | "No Show";
+  status: "Requested" | "Confirmed" | "Completed" | "Cancelled" | "No Show";
   notes?: string;
   createdAt: string;
   updatedAt: string;
@@ -57,172 +62,55 @@ const MOCK_STATS = [
     label: "Total Clinics",
     value: "247",
     trend: { value: "12%", isPositive: true },
-    icon: (
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M3 21h18" />
-        <path d="M5 21V7l8-4 8 4v14" />
-        <path d="M8 9a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v12H8V9z" />
-      </svg>
-    ),
+    icon: <Building2 size={20} />,
   },
 
   {
     label: "Active Clinics",
     value: "198",
     trend: { value: "8%", isPositive: true },
-    icon: (
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-        <polyline points="22 4 12 14.01 9 11.01" />
-      </svg>
-    ),
+    icon: <CircleCheck size={20} />,
   },
 
   {
     label: "Trial Clinics",
     value: "49",
     trend: { value: "5%", isPositive: false },
-    icon: (
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <circle cx="12" cy="12" r="10" />
-        <polyline points="12 6 12 12 16 14" />
-      </svg>
-    ),
+    icon: <Clock3 size={20} />,
   },
 
-  // Demo Requests will be replaced dynamically below
   {
     label: "Demo Requests",
     value: "0",
     trend: { value: "—", isPositive: true },
-    icon: (
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M15 10l5 5-5 5" />
-        <path d="M4 4v7a4 4 0 0 0 4 4h12" />
-      </svg>
-    ),
+    icon: <ArrowRight size={20} />,
   },
 
   {
     label: "New Leads",
     value: "67",
-    trend: { value: "24%", isPositive: true },
-    icon: (
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-        <circle cx="8.5" cy="7" r="4" />
-        <line x1="20" y1="8" x2="20" y2="14" />
-        <line x1="23" y1="11" x2="17" y2="11" />
-      </svg>
-    ),
+    icon: <UserPlus size={20} />,
   },
 
   {
     label: "Monthly Revenue",
     value: "$89,420",
     trend: { value: "15%", isPositive: true },
-    icon: (
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <line x1="12" y1="1" x2="12" y2="23" />
-        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-      </svg>
-    ),
+    icon: <DollarSign size={20} />,
   },
 
   {
     label: "Pending Payments",
     value: "12",
     trend: { value: "3", isPositive: false },
-    icon: (
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-        <line x1="1" y1="10" x2="23" y2="10" />
-      </svg>
-    ),
+    icon: <CreditCard size={20} />,
   },
 
   {
     label: "Churn Rate",
     value: "2.4%",
     trend: { value: "0.5%", isPositive: true },
-    icon: (
-      <svg
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-        <polyline points="17 6 23 6 23 12" />
-      </svg>
-    ),
+    icon: <ChartNoAxesCombined size={20} />,
   },
 ];
 
@@ -259,17 +147,12 @@ export default function PlatformAdminDashboardPage() {
         const data = await response.json();
 
         if (!data.success) {
-          throw new Error(
-            data.message || "Failed to fetch demo requests"
-          );
+          throw new Error(data.message || "Failed to fetch demo requests");
         }
 
         setDemos(data.data || []);
       } catch (error) {
-        console.error(
-          "Failed to fetch demo requests:",
-          error
-        );
+        console.error("Failed to fetch demo requests:", error);
 
         setDemoError("Failed to load demo requests.");
       } finally {
@@ -285,58 +168,54 @@ export default function PlatformAdminDashboardPage() {
   ---------------------------------------- */
 
   useEffect(() => {
-  const fetchLeads = async () => {
-    try {
-      setLoadingLeads(true);
-      setLeadError("");
+    const fetchLeads = async () => {
+      try {
+        setLoadingLeads(true);
+        setLeadError("");
 
-      const response = await fetch("/api/platform-admin/leads");
+        const response = await fetch("/api/platform-admin/leads");
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch leads");
+        if (!response.ok) {
+          throw new Error("Failed to fetch leads");
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.message || "Failed to fetch leads");
+        }
+
+        setLeads(data.data || []);
+      } catch (error) {
+        console.error("Failed to fetch leads:", error);
+
+        setLeadError("Failed to load leads.");
+      } finally {
+        setLoadingLeads(false);
       }
+    };
 
-      const data = await response.json();
-
-      if (!data.success) {
-        throw new Error(
-          data.message || "Failed to fetch leads"
-        );
-      }
-
-      setLeads(data.data || []);
-    } catch (error) {
-      console.error("Failed to fetch leads:", error);
-
-      setLeadError("Failed to load leads.");
-    } finally {
-      setLoadingLeads(false);
-    }
-  };
-
-  fetchLeads();
-}, []);
+    fetchLeads();
+  }, []);
 
   /* ----------------------------------------
      REAL DEMO REQUEST COUNT
   ---------------------------------------- */
 
- const demoRequestsCount = demos.filter(
-  (demo) => demo.status === "Requested"
-).length;
+  const demoRequestsCount = demos.filter(
+    (demo) => demo.status === "Requested",
+  ).length;
+  const newLeadsCount = leads.filter((lead) => lead.status === "New").length;
 
   /* ----------------------------------------
      DATE
   ---------------------------------------- */
 
-  const dateString = new Date().toLocaleDateString(
-    "en-US",
-    {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-    }
-  );
+  const dateString = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
 
   /* ----------------------------------------
      RECENT DEMOS
@@ -368,7 +247,6 @@ export default function PlatformAdminDashboardPage() {
 
   return (
     <div className="space-y-6">
-
       {/* ----------------------------------------
           WELCOME
       ---------------------------------------- */}
@@ -396,9 +274,7 @@ export default function PlatformAdminDashboardPage() {
       ---------------------------------------- */}
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-
         {MOCK_STATS.map((stat) => {
-
           /*
            * Replace the mock Demo Requests value
            * with the real database count.
@@ -410,7 +286,12 @@ export default function PlatformAdminDashboardPage() {
                   ...stat,
                   value: String(demoRequestsCount),
                 }
-              : stat;
+              : stat.label === "New Leads"
+                ? {
+                    ...stat,
+                    value: String(newLeadsCount),
+                  }
+                : stat;
 
           const card = (
             <StatCard
@@ -425,7 +306,6 @@ export default function PlatformAdminDashboardPage() {
           /*
            * Demo Requests card is clickable.
            */
-
           if (stat.label === "Demo Requests") {
             return (
               <Link
@@ -438,9 +318,20 @@ export default function PlatformAdminDashboardPage() {
             );
           }
 
+          if (stat.label === "New Leads") {
+            return (
+              <Link
+                key={stat.label}
+                href="/platform-admin/leads"
+                className="block transition-transform hover:-translate-y-0.5"
+              >
+                {card}
+              </Link>
+            );
+          }
+
           return card;
         })}
-
       </div>
 
       {/* ----------------------------------------
@@ -454,7 +345,6 @@ export default function PlatformAdminDashboardPage() {
 
         <div className="flex h-64 items-center justify-center rounded-lg border border-border-dashed bg-bg-page/50">
           <div className="text-center">
-
             <svg
               width="48"
               height="48"
@@ -474,7 +364,6 @@ export default function PlatformAdminDashboardPage() {
             <p className="text-sm text-text-muted">
               Revenue chart will be displayed here
             </p>
-
           </div>
         </div>
       </div>
@@ -484,7 +373,6 @@ export default function PlatformAdminDashboardPage() {
       ---------------------------------------- */}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-
         {/* ----------------------------------------
             RECENT DEMOS
         ---------------------------------------- */}
@@ -558,7 +446,6 @@ export default function PlatformAdminDashboardPage() {
             />
           )}
         </div>
-
       </div>
     </div>
   );
