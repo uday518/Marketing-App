@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { PlatformContact } from "@/models/platform-admin/PlatformContact";
 
-/* ----------------------------------------
-   GET ALL CONTACTS
----------------------------------------- */
-
+/* GET ALL CONTACTS */
 export async function GET() {
   try {
     await connectToDatabase();
@@ -31,10 +28,7 @@ export async function GET() {
   }
 }
 
-/* ----------------------------------------
-   CREATE CONTACT
----------------------------------------- */
-
+/* CREATE CONTACT */
 export async function POST(request: NextRequest) {
   try {
     await connectToDatabase();
@@ -46,35 +40,38 @@ export async function POST(request: NextRequest) {
       email,
       phone,
       company,
-      source,
-      status,
-      notes,
+      subject,
+      message,
     } = body;
 
-    if (!name || !email || !phone) {
+    // Required fields
+    if (!name || !email || !phone || !subject || !company || !message) {
       return NextResponse.json(
         {
           success: false,
-          message: "Name, email and phone are required",
+          message: "Name, email, phone, company, subject and message are required",
         },
         { status: 400 }
       );
     }
 
     const contact = await PlatformContact.create({
-      name,
-      email,
-      phone,
-      company,
-      source: source || "Manual",
-      status: status || "New",
-      notes,
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      phone: phone.trim() || "",
+      company: company.trim() || "",
+      subject: subject.trim(),
+      message: message.trim(),
+
+      // Set by server
+      source: "Website",
+      status: "New",
     });
 
     return NextResponse.json(
       {
         success: true,
-        message: "Contact created successfully",
+        message: "Contact message sent successfully",
         data: contact,
       },
       { status: 201 }
