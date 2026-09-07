@@ -20,20 +20,29 @@ export default function PlatformAdminLoginPage() {
     setError("");
     setLoading(true);
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      const result = await signIn("credentials", {
+  email: email.trim().toLowerCase(),
+  password,
+  loginType: "platform_admin",
+  rememberMe: String(rememberMe),
+  redirect: false,
+});
 
-    if (result?.error) {
-      setError("Invalid email or password.");
+      if (result?.error) {
+        setError("Invalid email or password.");
+        setLoading(false);
+        return;
+      }
+
+      router.push("/platform-admin");
+      router.refresh();
+    } catch (error) {
+      console.error("Platform admin login error:", error);
+
+      setError("Something went wrong. Please try again.");
       setLoading(false);
-      return;
     }
-
-    router.push("/platform-admin");
-    router.refresh();
   }
 
   return (
@@ -69,6 +78,7 @@ export default function PlatformAdminLoginPage() {
 
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Email */}
             <div>
               <label
                 htmlFor="email"
@@ -79,16 +89,19 @@ export default function PlatformAdminLoginPage() {
 
               <input
                 id="email"
+                name="email"
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 className="w-full rounded-md border border-border-default px-3 py-2 text-sm text-text-heading placeholder:text-text-muted focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
                 placeholder="admin@mysaas.com"
+                autoComplete="email"
                 required
                 disabled={loading}
               />
             </div>
 
+            {/* Password */}
             <div>
               <label
                 htmlFor="password"
@@ -99,18 +112,21 @@ export default function PlatformAdminLoginPage() {
 
               <input
                 id="password"
+                name="password"
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 className="w-full rounded-md border border-border-default px-3 py-2 text-sm text-text-heading placeholder:text-text-muted focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary"
                 placeholder="••••••••"
+                autoComplete="current-password"
                 required
                 disabled={loading}
               />
             </div>
 
+            {/* Remember Me + Forgot Password */}
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2">
+              <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={rememberMe}
@@ -136,13 +152,17 @@ export default function PlatformAdminLoginPage() {
 
             {/* Error */}
             {error && (
-              <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2">
+              <div
+                role="alert"
+                className="rounded-md border border-red-200 bg-red-50 px-3 py-2"
+              >
                 <p className="text-sm text-red-600">
                   {error}
                 </p>
               </div>
             )}
 
+            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
@@ -178,7 +198,7 @@ export default function PlatformAdminLoginPage() {
 
         {/* Footer */}
         <p className="text-center text-xs text-text-muted mt-6">
-          © 2024 mysaas. All rights reserved.
+          © 2026 mysaas. All rights reserved.
         </p>
       </div>
     </div>
