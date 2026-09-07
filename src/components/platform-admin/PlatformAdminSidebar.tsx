@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { signOut } from "next-auth/react";
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -82,8 +83,11 @@ export default function PlatformAdminSidebar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(["Sales"])
+    new Set(["Sales"]),
   );
+
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const toggleSection = (sectionName: string) => {
     setExpandedSections((prev) => {
@@ -111,6 +115,20 @@ export default function PlatformAdminSidebar() {
     return item.children.some((child) => pathname === child.href);
   };
 
+  const handleLogout = async () => {
+    try {
+      setLoggingOut(true);
+
+      await signOut({
+        callbackUrl: "/platform-admin/login",
+      });
+    } catch (error) {
+      console.error("Logout error:", error);
+      setLoggingOut(false);
+      setShowLogoutModal(false);
+    }
+  };
+
   return (
     <>
       {/* Mobile Trigger */}
@@ -136,9 +154,7 @@ export default function PlatformAdminSidebar() {
           isMobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        {/* ─────────────────────────────
-            Brand
-        ───────────────────────────── */}
+        {/* Brand */}
         <div className="flex h-[72px] items-center border-b border-border-default px-5">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-primary text-sm font-bold text-white shadow-sm">
@@ -157,9 +173,7 @@ export default function PlatformAdminSidebar() {
           </div>
         </div>
 
-        {/* ─────────────────────────────
-            Navigation
-        ───────────────────────────── */}
+        {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-5">
           {/* Overview */}
           <div className="mb-6">
@@ -168,34 +182,34 @@ export default function PlatformAdminSidebar() {
             </p>
 
             <ul className="space-y-1">
-              {NAV_ITEMS.filter(
-                (item) => item.name === "Dashboard"
-              ).map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.href);
+              {NAV_ITEMS.filter((item) => item.name === "Dashboard").map(
+                (item) => {
+                  const Icon = item.icon;
+                  const active = isActive(item.href);
 
-                return (
-                  <li key={item.name}>
-                    <Link
-                      href={item.href}
-                      onClick={() => setIsMobileOpen(false)}
-                      className={`group flex h-10 items-center rounded-xl px-3 text-sm font-medium transition-all ${
-                        active
-                          ? "bg-brand-primary text-white shadow-sm"
-                          : "text-text-body hover:bg-neutral-100 hover:text-text-heading"
-                      }`}
-                    >
-                      <Icon
-                        size={18}
-                        strokeWidth={active ? 2.2 : 1.9}
-                        className="mr-3 shrink-0"
-                      />
+                  return (
+                    <li key={item.name}>
+                      <Link
+                        href={item.href}
+                        onClick={() => setIsMobileOpen(false)}
+                        className={`group flex h-10 items-center rounded-xl px-3 text-sm font-medium transition-all ${
+                          active
+                            ? "bg-brand-primary text-white shadow-sm"
+                            : "text-text-body hover:bg-neutral-100 hover:text-text-heading"
+                        }`}
+                      >
+                        <Icon
+                          size={18}
+                          strokeWidth={active ? 2.2 : 1.9}
+                          className="mr-3 shrink-0"
+                        />
 
-                      <span>{item.name}</span>
-                    </Link>
-                  </li>
-                );
-              })}
+                        <span>{item.name}</span>
+                      </Link>
+                    </li>
+                  );
+                },
+              )}
             </ul>
           </div>
 
@@ -211,11 +225,10 @@ export default function PlatformAdminSidebar() {
                   item.name !== "Dashboard" &&
                   item.name !== "Payments" &&
                   item.name !== "Plans" &&
-                  item.name !== "Settings"
+                  item.name !== "Settings",
               ).map((item) => {
                 const Icon = item.icon;
 
-                {/* Expandable Section */}
                 if (item.children) {
                   const isExpanded = expandedSections.has(item.name);
                   const sectionActive = isSectionActive(item);
@@ -254,7 +267,6 @@ export default function PlatformAdminSidebar() {
                         />
                       </button>
 
-                      {/* Sub Navigation */}
                       <div
                         className={`grid transition-all duration-200 ${
                           isExpanded
@@ -286,8 +298,6 @@ export default function PlatformAdminSidebar() {
                                     />
 
                                     <span>{child.name}</span>
-
-                              
                                   </Link>
                                 </li>
                               );
@@ -299,7 +309,6 @@ export default function PlatformAdminSidebar() {
                   );
                 }
 
-                {/* Normal Management Item */}
                 return (
                   <li key={item.name}>
                     <Link
@@ -333,7 +342,7 @@ export default function PlatformAdminSidebar() {
 
             <ul className="space-y-1">
               {NAV_ITEMS.filter(
-                (item) => item.name === "Payments" || item.name === "Plans"
+                (item) => item.name === "Payments" || item.name === "Plans",
               ).map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.href);
@@ -370,45 +379,44 @@ export default function PlatformAdminSidebar() {
             </p>
 
             <ul className="space-y-1">
-              {NAV_ITEMS.filter(
-                (item) => item.name === "Settings"
-              ).map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.href);
+              {NAV_ITEMS.filter((item) => item.name === "Settings").map(
+                (item) => {
+                  const Icon = item.icon;
+                  const active = isActive(item.href);
 
-                return (
-                  <li key={item.name}>
-                    <Link
-                      href={item.href}
-                      onClick={() => setIsMobileOpen(false)}
-                      className={`group flex h-10 items-center rounded-xl px-3 text-sm font-medium transition-all ${
-                        active
-                          ? "bg-brand-primary text-white shadow-sm"
-                          : "text-text-body hover:bg-neutral-100 hover:text-text-heading"
-                      }`}
-                    >
-                      <Icon
-                        size={18}
-                        strokeWidth={active ? 2.2 : 1.9}
-                        className="mr-3 shrink-0"
-                      />
+                  return (
+                    <li key={item.name}>
+                      <Link
+                        href={item.href}
+                        onClick={() => setIsMobileOpen(false)}
+                        className={`group flex h-10 items-center rounded-xl px-3 text-sm font-medium transition-all ${
+                          active
+                            ? "bg-brand-primary text-white shadow-sm"
+                            : "text-text-body hover:bg-neutral-100 hover:text-text-heading"
+                        }`}
+                      >
+                        <Icon
+                          size={18}
+                          strokeWidth={active ? 2.2 : 1.9}
+                          className="mr-3 shrink-0"
+                        />
 
-                      <span>{item.name}</span>
-                    </Link>
-                  </li>
-                );
-              })}
+                        <span>{item.name}</span>
+                      </Link>
+                    </li>
+                  );
+                },
+              )}
             </ul>
           </div>
         </nav>
 
-        {/* ─────────────────────────────
-            Bottom Area
-        ───────────────────────────── */}
+        {/* Bottom Area */}
         <div className="border-t border-border-default p-3">
           {/* Help */}
           <Link
             href="/platform-admin/help"
+            onClick={() => setIsMobileOpen(false)}
             className="mb-2 flex h-9 items-center rounded-lg px-3 text-[13px] font-medium text-text-muted transition-colors hover:bg-neutral-100 hover:text-text-heading"
           >
             <HelpCircle size={16} className="mr-3" strokeWidth={1.9} />
@@ -433,14 +441,66 @@ export default function PlatformAdminSidebar() {
 
             <button
               type="button"
+              onClick={() => setShowLogoutModal(true)}
               className="ml-2 flex h-7 w-7 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-neutral-100 hover:text-text-heading"
               title="Logout"
+              aria-label="Logout"
             >
               <LogOut size={15} strokeWidth={1.9} />
             </button>
           </div>
         </div>
       </aside>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 px-4 backdrop-blur-[2px]"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !loggingOut) {
+              setShowLogoutModal(false);
+            }
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="logout-modal-title"
+            className="w-full max-w-sm rounded-xl border border-border-default bg-white p-6 shadow-xl"
+          >
+            <div className="flex justify-center">
+              <p
+                id="logout-modal-title"
+                className="text-center text-lg leading-6 text-text-heading"
+              >
+                Are you sure you want to logout?
+              </p>
+            </div>
+
+            <div className="mt-6 flex justify-center gap-12">
+              <button
+                type="button"
+                onClick={() => setShowLogoutModal(false)}
+                disabled={loggingOut}
+                className="rounded-md border border-border-default px-4 py-2 text-sm font-medium text-text-body transition-colors hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={loggingOut}
+                className="inline-flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <LogOut size={16} />
+
+                {loggingOut ? "Logging out..." : "Logout"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
