@@ -89,59 +89,36 @@ export const authOptions: NextAuthOptions = {
         }
 
         await connectToDatabase();
-
         // --------------------------------------------------
         // PLATFORM ADMIN
         // --------------------------------------------------
         if (loginType === "platform_admin") {
-          const platformAdmin = await PlatformAdmin.findOne({
-            email,
-          }).select("+passwordHash");
+          const platformAdminEmail =
+            process.env.PLATFORM_ADMIN_EMAIL?.toLowerCase().trim();
 
-          if (!platformAdmin) {
+          const platformAdminPassword = process.env.PLATFORM_ADMIN_PASSWORD;
+
+          if (
+            email !== platformAdminEmail ||
+            credentials.password !== platformAdminPassword
+          ) {
             return null;
           }
-
-          if (!platformAdmin.isActive) {
-            return null;
-          }
-
-          const isValid = await bcrypt.compare(
-            credentials.password,
-            platformAdmin.passwordHash,
-          );
-
-          if (!isValid) {
-            return null;
-          }
-
-          await PlatformAdmin.updateOne(
-            {
-              _id: platformAdmin._id,
-            },
-            {
-              $set: {
-                lastLoginAt: new Date(),
-              },
-            },
-          );
 
           return {
-            id: platformAdmin._id.toString(),
-            email: platformAdmin.email,
-            name: platformAdmin.name,
+            id: "platform-admin",
+            email: platformAdminEmail,
+            name: "Platform Admin",
 
             role: "platform_admin",
 
-            platformRole: platformAdmin.role,
+            platformRole: "super_admin",
 
             clinicId: null,
 
             rememberMe,
 
-            passwordChangedAt: platformAdmin.passwordChangedAt
-              ? platformAdmin.passwordChangedAt.getTime()
-              : null,
+            passwordChangedAt: null,
           };
         }
 

@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import type { ReactNode } from 'react';
-
 import { authOptions } from '@/lib/auth';
 import { connectToDatabase } from '@/lib/db';
 import {

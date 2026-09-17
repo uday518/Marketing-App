@@ -77,11 +77,29 @@ export default async function PatientDetailPage({
     redirect('/patients');
   }
 
-  const [appointments, encounters, plans] = await Promise.all([
-    Appointment.find({ patientId: id }).sort({ dateTime: -1 }).limit(10).lean(),
-    Encounter.find({ patientId: id }).sort({ createdAt: -1 }).limit(10).lean(),
-    TreatmentPlan.find({ patientId: id }).sort({ updatedAt: -1 }).limit(10).lean(),
-  ]);
+ const [appointments, encounters, plans] = await Promise.all([
+  Appointment.find({
+    patientId: id,
+    clinicId: session.user.clinicId,
+  })
+    .sort({ dateTime: -1 })
+    .limit(10)
+    .lean(),
+
+  Encounter.find({
+    patientId: id,
+  })
+    .sort({ createdAt: -1 })
+    .limit(10)
+    .lean(),
+
+  TreatmentPlan.find({
+    patientId: id,
+  })
+    .sort({ updatedAt: -1 })
+    .limit(10)
+    .lean(),
+]);
 
   const planTotal = (plan: (typeof plans)[number]) =>
     plan.items.reduce((sum, item) => sum + (item.cost ?? 0), 0);

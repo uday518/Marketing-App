@@ -94,20 +94,58 @@ const encounterSchema = new Schema(
 
 const treatmentPlanSchema = new Schema(
   {
-    patientId: { type: Schema.Types.ObjectId, ref: 'Patient', required: true },
+    patientId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Patient',
+      required: true,
+      index: true,
+    },
+
+    clinicId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Clinic',
+      required: true,
+      index: true,
+    },
+
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
     status: {
       type: String,
       enum: ['draft', 'in-progress', 'accepted', 'completed'],
       default: 'draft',
     },
+
     items: [
       {
-        procedure: { type: String, required: true },
-        cost: { type: Number, default: 0 },
-        priority: { type: Number, default: 1 },
+        procedure: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+
+        cost: {
+          type: Number,
+          default: 0,
+          min: 0,
+        },
+
+        priority: {
+          type: Number,
+          default: 1,
+        },
       },
     ],
-    notes: { type: String, default: '' },
+
+    notes: {
+      type: String,
+      default: '',
+      trim: true,
+    },
   },
   { timestamps: true },
 );
