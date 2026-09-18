@@ -149,6 +149,42 @@ const treatmentPlanSchema = new Schema(
   },
   { timestamps: true },
 );
+const clinicalNoteSchema = new Schema(
+  {
+    patientId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Patient',
+      required: true,
+      index: true,
+    },
+
+    clinicId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Clinic',
+      required: true,
+      index: true,
+    },
+
+    clinicianId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
+
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    note: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+  },
+  { timestamps: true },
+);
 
 const auditLogSchema = new Schema(
   {
@@ -202,6 +238,7 @@ type AppointmentDoc = InferSchemaType<typeof appointmentSchema>;
 type ClinicDoc = InferSchemaType<typeof clinicSchema>;
 type EncounterDoc = InferSchemaType<typeof encounterSchema>;
 type TreatmentPlanDoc = InferSchemaType<typeof treatmentPlanSchema>;
+type ClinicalNoteDoc = InferSchemaType<typeof clinicalNoteSchema>;
 type QueueEntryDoc = InferSchemaType<typeof queueEntrySchema> & {
   calledAt?: Date | null;
   completedAt?: Date | null;
@@ -223,6 +260,7 @@ export const Appointment = model<AppointmentDoc>('Appointment', appointmentSchem
 export const QueueEntry = model<QueueEntryDoc>('QueueEntry', queueEntrySchema);
 export const Encounter = model<EncounterDoc>('Encounter', encounterSchema);
 export const TreatmentPlan = model<TreatmentPlanDoc>('TreatmentPlan', treatmentPlanSchema);
+export const ClinicalNote = model<ClinicalNoteDoc>('ClinicalNote', clinicalNoteSchema);
 export const AuditLog = model<AuditLogDoc>('AuditLog', auditLogSchema);
 export const ContactMessage = model<ContactMessageDoc>('ContactMessage', contactMessageSchema);
 export const PlatformAdmin = model<PlatformAdminDoc>('PlatformAdmin', platformAdminSchema);
@@ -238,6 +276,7 @@ export type {
   ClinicDoc,
   EncounterDoc,
   TreatmentPlanDoc,
+  ClinicalNoteDoc,
   QueueEntryDoc,
   AuditLogDoc,
   ContactMessageDoc,
